@@ -41,6 +41,18 @@ npx expo start
 npx tsc --noEmit
 ```
 
+## オンデバイスQwen3
+
+ローカルLLM実行には `llama.rn` を使います。クラウドLLMには接続しません。
+
+本番ビルド前に、次のファイルを実モデルへ差し替えてください。
+
+```text
+assets/models/qwen3-0.6b-q4_k_m.gguf
+```
+
+このリポジトリには小さなプレースホルダーを置いています。実モデルが50MB未満、読み込み不可、またはネイティブモジュールが使えない環境では、相談機能は監修済みテンプレートへフォールバックします。
+
 ## iOS / TestFlight
 
 `eas.json` の `submit.production.ios` には、実際の Apple ID、App Store Connect App ID、Team ID を設定してください。

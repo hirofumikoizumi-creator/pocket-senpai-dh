@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/u
 import { getAIResponse } from '../../src/services/aiService';
 import { ConsultationResponse } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { getOnDeviceQwenStatus, OnDeviceQwenStatus } from '../../src/services/onDeviceQwen';
 
 interface Message {
   id: string;
@@ -38,7 +39,18 @@ export default function ConsultationScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [qwenStatus, setQwenStatus] = useState<OnDeviceQwenStatus>('loading');
   const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getOnDeviceQwenStatus().then((status) => {
+      if (mounted) setQwenStatus(status);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleSend = async (text?: string) => {
     const query = text || inputText.trim();
@@ -171,6 +183,18 @@ export default function ConsultationScreen() {
           showsVerticalScrollIndicator={false}
         >
           <Disclaimer />
+          <View style={styles.localModelNotice}>
+            <MaterialCommunityIcons
+              name={qwenStatus === 'ready' ? 'chip' : 'shield-check-outline'}
+              size={14}
+              color={qwenStatus === 'ready' ? COLORS.primaryDark : COLORS.textSecondary}
+            />
+            <Text style={styles.localModelText}>
+              {qwenStatus === 'ready'
+                ? 'Qwen3オンデバイス整形が有効です'
+                : 'Qwen3未読込のため、監修済みテンプレートで安全に応答します'}
+            </Text>
+          </View>
           {/* 初期表示 */}
           {messages.length === 0 && (
             <View style={styles.welcomeContainer}>
@@ -276,6 +300,23 @@ const styles = StyleSheet.create({
   messagesContent: {
     padding: SPACING.md,
     paddingBottom: SPACING.lg,
+  },
+  localModelNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  localModelText: {
+    flex: 1,
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.xs,
+    lineHeight: 16,
   },
   welcomeContainer: {
     alignItems: 'center',
