@@ -19,8 +19,8 @@ export type QwenFormatInput = {
 type LlamaModule = typeof import('llama.rn');
 type LlamaContext = Awaited<ReturnType<LlamaModule['initLlama']>>;
 
-const MIN_REAL_MODEL_BYTES = 50 * 1024 * 1024;
-const QWEN_MODEL_ASSET = require('../../assets/models/qwen3-0.6b-q4_k_m.gguf');
+const MIN_REAL_MODEL_BYTES = 500 * 1024 * 1024;
+const QWEN_MODEL_ASSET = require('../../assets/models/Qwen3-0.6B-Q8_0.gguf');
 const STOP_WORDS = ['</s>', '<|end|>', '<|im_end|>', '<|endoftext|>'];
 
 let contextPromise: Promise<LlamaContext | null> | null = null;

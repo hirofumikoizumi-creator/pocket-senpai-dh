@@ -9,7 +9,7 @@
 - 監修済みの `src/data/` 素材外の医療事実を生成しません。
 - Qwen3ランタイムが利用できない環境では、テンプレート応答へフォールバックします。
 - iOSのローカル推論ランタイムは `llama.rn` を使用します。
-- 同梱GGUFモデルの配置先は `assets/models/qwen3-0.6b-q4_k_m.gguf` です。
+- 同梱GGUFモデルの配置先は `assets/models/Qwen3-0.6B-Q8_0.gguf` です。
 
 ## 常設免責文
 

@@ -1,8 +1,8 @@
 export const modelManifest = {
   id: 'qwen3-on-device',
   displayName: 'Qwen3 On-device Formatter',
-  filename: 'qwen3-0.6b-q4_k_m.gguf',
-  minBytes: 52428800,
+  filename: 'Qwen3-0.6B-Q8_0.gguf',
+  minBytes: 524288000,
   runtime: 'llama.rn',
   mode: 'bundled-gguf-required',
   cloudApiEnabled: false,
