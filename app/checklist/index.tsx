@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { checklistData } from '../../src/data/checklists';
 import { ChecklistCategory, ChecklistItem } from '../../src/types';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 const STORAGE_KEY = '@pocket_senpai_checklists';
 
@@ -183,9 +184,12 @@ export default function ChecklistScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <Text style={styles.headerText}>
-              処置前の準備確認に使えるチェックリストです
-            </Text>
+            <>
+              <Disclaimer />
+              <Text style={styles.headerText}>
+                院内方針を確認しながら使う学習用チェックリストです
+              </Text>
+            </>
           }
         />
       </View>

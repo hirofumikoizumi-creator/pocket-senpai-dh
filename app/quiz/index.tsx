@@ -11,6 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { quizData, getQuizCategories, getQuizzesByCategory } from '../../src/data/quizzes';
 import { Quiz } from '../../src/types';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 type QuizState = 'category' | 'playing' | 'result';
 
@@ -80,6 +81,7 @@ export default function QuizScreen() {
       <>
         <Stack.Screen options={{ title: 'ミニ学習クイズ', headerBackTitle: '戻る' }} />
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+          <Disclaimer />
           <Text style={styles.headerText}>カテゴリを選んでクイズに挑戦しよう</Text>
           {categories.map((category) => {
             const count = getQuizzesByCategory(category).length;
@@ -114,6 +116,7 @@ export default function QuizScreen() {
       <>
         <Stack.Screen options={{ title: selectedCategory, headerBackTitle: '戻る' }} />
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+          <Disclaimer />
           {/* プログレス */}
           <View style={styles.progressContainer}>
             <Text style={styles.progressLabel}>
@@ -203,6 +206,7 @@ export default function QuizScreen() {
     <>
       <Stack.Screen options={{ title: '結果', headerBackTitle: '戻る' }} />
       <ScrollView style={styles.container} contentContainerStyle={styles.resultContent}>
+        <Disclaimer />
         <View style={styles.resultCard}>
           <MaterialCommunityIcons
             name={score >= currentQuizzes.length * 0.7 ? 'trophy' : 'emoticon-outline'}

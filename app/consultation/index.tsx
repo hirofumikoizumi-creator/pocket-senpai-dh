@@ -15,6 +15,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { getAIResponse } from '../../src/services/aiService';
 import { ConsultationResponse } from '../../src/types';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 interface Message {
   id: string;
@@ -146,10 +147,7 @@ export default function ConsultationScreen() {
         </View>
       )}
 
-      {/* 免責事項 */}
-      <Text style={styles.disclaimer}>
-        ※ 参考情報です。実際の判断は歯科医師・所属医院へ確認してください。
-      </Text>
+      <Disclaimer compact />
     </View>
   );
 
@@ -172,6 +170,7 @@ export default function ConsultationScreen() {
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
         >
+          <Disclaimer />
           {/* 初期表示 */}
           {messages.length === 0 && (
             <View style={styles.welcomeContainer}>
@@ -413,12 +412,6 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     color: COLORS.text,
     lineHeight: 22,
-  },
-  disclaimer: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
-    textAlign: 'center',
-    marginTop: SPACING.xs,
   },
   loadingContainer: {
     flexDirection: 'row',

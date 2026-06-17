@@ -78,7 +78,7 @@ export interface FavoriteItem {
   savedAt: string;
 }
 
-// AI サービスインターフェース（将来のOpenAI API対応用）
+// AI サービスインターフェース（オンデバイス整形・テンプレートフォールバック用）
 export interface AIServiceInterface {
   getResponse(query: string): Promise<ConsultationResponse>;
 }

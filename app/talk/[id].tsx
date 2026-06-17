@@ -9,6 +9,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { talkScripts } from '../../src/data/talks';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 export default function TalkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,6 +32,7 @@ export default function TalkDetailScreen() {
         }}
       />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <Disclaimer />
         {/* ヘッダー */}
         <View style={styles.header}>
           <Text style={styles.title}>{talk.title}</Text>
@@ -81,10 +83,7 @@ export default function TalkDetailScreen() {
           <Text style={styles.adText}>広告スペース</Text>
         </View>
 
-        {/* 免責事項 */}
-        <Text style={styles.disclaimer}>
-          ※ 会話例は参考情報です。実際の状況に応じて適宜調整してください。
-        </Text>
+        <Disclaimer compact />
       </ScrollView>
     </>
   );
@@ -189,11 +188,5 @@ const styles = StyleSheet.create({
   adText: {
     fontSize: FONT_SIZES.xs,
     color: COLORS.textLight,
-  },
-  disclaimer: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
-    textAlign: 'center',
-    marginTop: SPACING.sm,
   },
 });

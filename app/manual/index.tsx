@@ -10,6 +10,7 @@ import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { manuals } from '../../src/data/manuals';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 const categoryIcons: Record<string, { icon: string; color: string }> = {
   'TBI': { icon: 'toothbrush', color: '#4ECDC4' },
@@ -62,9 +63,12 @@ export default function ManualListScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <Text style={styles.headerText}>
-              各処置の手順とポイントを確認できます
-            </Text>
+            <>
+              <Disclaimer />
+              <Text style={styles.headerText}>
+                各業務の学習ポイントを確認できます
+              </Text>
+            </>
           }
         />
       </View>

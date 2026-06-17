@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../src/utils/theme';
+import { Disclaimer } from '../src/components/Disclaimer';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - SPACING.lg * 3) / 2;
@@ -91,12 +92,8 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* 免責事項バナー */}
-      <View style={styles.disclaimerBanner}>
-        <MaterialCommunityIcons name="information-outline" size={14} color={COLORS.primary} />
-        <Text style={styles.disclaimerText}>
-          本アプリは教育・学習支援目的の参考情報です
-        </Text>
+      <View style={styles.disclaimerWrapper}>
+        <Disclaimer compact />
       </View>
 
       {/* メニューカード */}
@@ -166,23 +163,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  disclaimerBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  disclaimerWrapper: {
     marginHorizontal: SPACING.lg,
     marginVertical: SPACING.sm,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.surfaceLight,
-    borderRadius: BORDER_RADIUS.sm,
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.primary,
-  },
-  disclaimerText: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textSecondary,
-    marginLeft: SPACING.xs,
-    flex: 1,
   },
   scrollView: {
     flex: 1,

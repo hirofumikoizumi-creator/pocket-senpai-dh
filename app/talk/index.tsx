@@ -10,6 +10,7 @@ import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { talkScripts } from '../../src/data/talks';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 const categoryIcons: Record<string, { icon: string; color: string }> = {
   '歯周病説明': { icon: 'tooth-outline', color: '#4ECDC4' },
@@ -61,9 +62,12 @@ export default function TalkListScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <Text style={styles.headerText}>
-              患者さんへの説明で使える会話例を集めました
-            </Text>
+            <>
+              <Disclaimer />
+              <Text style={styles.headerText}>
+                患者さんへの説明で使える会話例を集めました
+              </Text>
+            </>
           }
         />
       </View>

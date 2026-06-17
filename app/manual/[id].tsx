@@ -9,6 +9,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { manuals } from '../../src/data/manuals';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 export default function ManualDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,6 +32,7 @@ export default function ManualDetailScreen() {
         }}
       />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <Disclaimer />
         {/* タイトル */}
         <Text style={styles.title}>{manual.title}</Text>
         <Text style={styles.overview}>{manual.overview}</Text>
@@ -87,10 +89,7 @@ export default function ManualDetailScreen() {
           ))}
         </View>
 
-        {/* 免責事項 */}
-        <Text style={styles.disclaimer}>
-          ※ 本マニュアルは学習支援目的の参考情報です。実際の診療判断は歯科医師・所属医院へ確認してください。
-        </Text>
+        <Disclaimer compact />
       </ScrollView>
     </>
   );
@@ -209,12 +208,5 @@ const styles = StyleSheet.create({
   adText: {
     fontSize: FONT_SIZES.xs,
     color: COLORS.textLight,
-  },
-  disclaimer: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
-    textAlign: 'center',
-    marginTop: SPACING.md,
-    lineHeight: 18,
   },
 });

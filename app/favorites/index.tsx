@@ -11,6 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { useFavorites } from '../../src/hooks/useFavorites';
 import { FavoriteItem } from '../../src/types';
+import { Disclaimer } from '../../src/components/Disclaimer';
 
 const typeIcons: Record<string, { icon: string; color: string }> = {
   consultation: { icon: 'chat-processing-outline', color: '#4ECDC4' },
@@ -85,6 +86,7 @@ export default function FavoritesScreen() {
       <View style={styles.container}>
         {favorites.length === 0 ? (
           <View style={styles.emptyContainer}>
+            <Disclaimer />
             <MaterialCommunityIcons name="heart-outline" size={60} color={COLORS.textLight} />
             <Text style={styles.emptyTitle}>お気に入りはまだありません</Text>
             <Text style={styles.emptySubtitle}>
@@ -98,6 +100,7 @@ export default function FavoritesScreen() {
             keyExtractor={(item) => `${item.id}-${item.savedAt}`}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<Disclaimer />}
           />
         )}
       </View>
