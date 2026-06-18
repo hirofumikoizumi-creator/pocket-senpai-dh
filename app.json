@@ -7,21 +7,12 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "pocket-senpai",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#F0FDF9"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.pocketsenpai.dh",
       "buildNumber": "1",
       "infoPlist": {
         "NSUserTrackingUsageDescription": "広告の最適化のために使用します"
-      },
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY"
       }
     },
     "android": {
@@ -41,7 +32,7 @@
         "expo-build-properties",
         {
           "ios": {
-            "deploymentTarget": "16.0",
+            "deploymentTarget": "16.4",
             "useFrameworks": "static"
           }
         }
@@ -52,7 +43,7 @@
           "enableEntitlements": true,
           "entitlementsProfile": "production",
           "forceCxx20": true,
-          "enableOpenCL": false
+          "enableOpenCLAndHexagon": false
         }
       ],
       [
@@ -65,6 +56,8 @@
       [
         "expo-splash-screen",
         {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
           "backgroundColor": "#F0FDF9"
         }
       ]
