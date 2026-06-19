@@ -9,7 +9,7 @@
     "scheme": "pocket-senpai",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.pocketsenpai.dh",
+      "bundleIdentifier": "com.gsw.pocketsenpai.shikaeiseishi",
       "buildNumber": "1",
       "infoPlist": {
         "NSUserTrackingUsageDescription": "広告の最適化のために使用します"
