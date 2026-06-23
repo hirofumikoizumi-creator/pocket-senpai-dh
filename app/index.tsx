@@ -68,6 +68,39 @@ const menuCards: MenuCard[] = [
   },
 ];
 
+function SenpaiCharacter() {
+  return (
+    <View style={styles.senpaiCharacter}>
+      <View style={styles.characterShadow} />
+      <View style={styles.hairBack} />
+      <View style={styles.hairBun} />
+      <View style={styles.face}>
+        <View style={styles.bangsLeft} />
+        <View style={styles.bangsRight} />
+        <View style={styles.eyeRow}>
+          <View style={styles.eye} />
+          <View style={styles.eye} />
+        </View>
+        <View style={styles.smile} />
+      </View>
+      <View style={styles.neck} />
+      <View style={styles.uniformBody}>
+        <View style={styles.collarLeft} />
+        <View style={styles.collarRight} />
+        <View style={styles.clipboard}>
+          <MaterialCommunityIcons name="clipboard-check-outline" size={20} color={COLORS.primaryDark} />
+        </View>
+      </View>
+      <View style={styles.armLeft} />
+      <View style={styles.armRight} />
+      <View style={styles.legLeft} />
+      <View style={styles.legRight} />
+      <View style={styles.shoeLeft} />
+      <View style={styles.shoeRight} />
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const router = useRouter();
 
@@ -102,7 +135,7 @@ export default function HomeScreen() {
               <MaterialCommunityIcons name="star-outline" size={14} color={COLORS.primaryDark} />
               <Text style={styles.featureBadgeText}>目玉機能</Text>
             </View>
-            <Text style={styles.featureTitle}>先輩相談 AIチャット</Text>
+            <Text style={styles.featureTitle}>先輩相談AIチャット</Text>
             <Text style={styles.featureDescription}>仕事の不安、説明の迷い、成長の悩みを先輩に相談</Text>
             <View style={styles.featureButton}>
               <Text style={styles.featureButtonText}>相談する</Text>
@@ -112,12 +145,7 @@ export default function HomeScreen() {
 
           <View style={styles.mentorIllustration}>
             <View style={styles.mentorHalo} />
-            <View style={styles.mentorHead}>
-              <MaterialCommunityIcons name="face-woman-outline" size={44} color="#8B5E3C" />
-            </View>
-            <View style={styles.mentorBody}>
-              <MaterialCommunityIcons name="clipboard-text-outline" size={30} color={COLORS.primaryDark} />
-            </View>
+            <SenpaiCharacter />
           </View>
         </TouchableOpacity>
 
@@ -268,32 +296,212 @@ const styles = StyleSheet.create({
   },
   mentorHalo: {
     position: 'absolute',
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 104,
+    height: 104,
+    borderRadius: 52,
     backgroundColor: COLORS.surfaceLight,
-    top: 34,
+    top: 32,
   },
-  mentorHead: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: '#FFF3EA',
+  senpaiCharacter: {
+    width: 104,
+    height: 150,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: -4,
-    zIndex: 2,
+    position: 'relative',
   },
-  mentorBody: {
-    width: 76,
-    height: 74,
-    borderRadius: 28,
-    backgroundColor: '#FFFFFF',
+  characterShadow: {
+    position: 'absolute',
+    bottom: 0,
+    width: 58,
+    height: 9,
+    borderRadius: 999,
+    backgroundColor: 'rgba(45, 55, 72, 0.12)',
+  },
+  hairBack: {
+    position: 'absolute',
+    top: 6,
+    width: 54,
+    height: 58,
+    borderRadius: 27,
+    backgroundColor: '#A86F4C',
+  },
+  hairBun: {
+    position: 'absolute',
+    top: 2,
+    right: 21,
+    width: 23,
+    height: 23,
+    borderRadius: 12,
+    backgroundColor: '#8B5E3C',
     borderWidth: 2,
-    borderColor: '#EAF8F5',
+    borderColor: '#B98057',
+  },
+  face: {
+    position: 'absolute',
+    top: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFE4D4',
+    borderWidth: 2,
+    borderColor: '#F7C7AF',
+    alignItems: 'center',
+  },
+  bangsLeft: {
+    position: 'absolute',
+    top: -5,
+    left: 4,
+    width: 24,
+    height: 18,
+    borderTopLeftRadius: 20,
+    borderBottomRightRadius: 16,
+    backgroundColor: '#8B5E3C',
+    transform: [{ rotate: '-16deg' }],
+  },
+  bangsRight: {
+    position: 'absolute',
+    top: -4,
+    right: 5,
+    width: 20,
+    height: 15,
+    borderTopRightRadius: 18,
+    borderBottomLeftRadius: 14,
+    backgroundColor: '#A86F4C',
+    transform: [{ rotate: '18deg' }],
+  },
+  eyeRow: {
+    flexDirection: 'row',
+    gap: 13,
+    marginTop: 23,
+  },
+  eye: {
+    width: 4,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: COLORS.text,
+  },
+  smile: {
+    width: 13,
+    height: 7,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D98677',
+    borderRadius: 8,
+    marginTop: 4,
+  },
+  neck: {
+    position: 'absolute',
+    top: 61,
+    width: 16,
+    height: 14,
+    backgroundColor: '#FFD8C4',
+  },
+  uniformBody: {
+    position: 'absolute',
+    top: 70,
+    width: 58,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: '#E3F6F2',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1,
+  },
+  collarLeft: {
+    position: 'absolute',
+    top: 0,
+    left: 15,
+    width: 16,
+    height: 16,
+    borderBottomRightRadius: 12,
+    backgroundColor: '#EEFDF9',
+    transform: [{ rotate: '22deg' }],
+  },
+  collarRight: {
+    position: 'absolute',
+    top: 0,
+    right: 15,
+    width: 16,
+    height: 16,
+    borderBottomLeftRadius: 12,
+    backgroundColor: '#EEFDF9',
+    transform: [{ rotate: '-22deg' }],
+  },
+  clipboard: {
+    width: 30,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#CFF4ED',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  armLeft: {
+    position: 'absolute',
+    top: 84,
+    left: 20,
+    width: 13,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+    transform: [{ rotate: '16deg' }],
+  },
+  armRight: {
+    position: 'absolute',
+    top: 84,
+    right: 20,
+    width: 13,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+    transform: [{ rotate: '-16deg' }],
+  },
+  legLeft: {
+    position: 'absolute',
+    top: 120,
+    left: 43,
+    width: 10,
+    height: 24,
+    borderRadius: 5,
+    backgroundColor: '#F9FFFF',
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  legRight: {
+    position: 'absolute',
+    top: 120,
+    right: 43,
+    width: 10,
+    height: 24,
+    borderRadius: 5,
+    backgroundColor: '#F9FFFF',
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  shoeLeft: {
+    position: 'absolute',
+    bottom: 4,
+    left: 38,
+    width: 16,
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  shoeRight: {
+    position: 'absolute',
+    bottom: 4,
+    right: 38,
+    width: 16,
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
   },
   sectionTitle: {
     color: COLORS.textSecondary,
