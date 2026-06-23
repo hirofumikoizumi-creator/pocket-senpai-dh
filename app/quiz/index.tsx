@@ -12,6 +12,7 @@ import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/u
 import { quizData, getQuizCategories, getQuizzesByCategory } from '../../src/data/quizzes';
 import { Quiz } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { FavoriteButton } from '../../src/components/FavoriteButton';
 
 type QuizState = 'category' | 'playing' | 'result';
 
@@ -135,6 +136,16 @@ export default function QuizScreen() {
           {/* 問題 */}
           <View style={styles.questionCard}>
             <Text style={styles.questionText}>{quiz.question}</Text>
+            <View style={styles.favoriteRow}>
+              <FavoriteButton
+                item={{
+                  id: quiz.id,
+                  type: 'quiz',
+                  title: quiz.question,
+                  category: quiz.category,
+                }}
+              />
+            </View>
           </View>
 
           {/* 選択肢 */}
@@ -322,6 +333,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.text,
     lineHeight: 28,
+  },
+  favoriteRow: {
+    marginTop: SPACING.md,
   },
   optionButton: {
     flexDirection: 'row',
