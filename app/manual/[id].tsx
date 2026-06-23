@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { manuals } from '../../src/data/manuals';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { FavoriteButton } from '../../src/components/FavoriteButton';
 
 export default function ManualDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -36,6 +37,16 @@ export default function ManualDetailScreen() {
         {/* タイトル */}
         <Text style={styles.title}>{manual.title}</Text>
         <Text style={styles.overview}>{manual.overview}</Text>
+        <View style={styles.favoriteRow}>
+          <FavoriteButton
+            item={{
+              id: manual.id,
+              type: 'manual',
+              title: manual.title,
+              category: manual.category,
+            }}
+          />
+        </View>
 
         {/* 手順 */}
         <View style={styles.section}>
@@ -114,6 +125,9 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     color: COLORS.textSecondary,
     lineHeight: 22,
+    marginBottom: SPACING.sm,
+  },
+  favoriteRow: {
     marginBottom: SPACING.lg,
   },
   section: {
