@@ -41,6 +41,27 @@ npx expo start
 npx tsc --noEmit
 ```
 
+## ブラウザでテスト
+
+ローカルでWeb版を起動する場合は次を使います。
+
+```bash
+npm install
+npm run web
+```
+
+静的Web版を書き出す場合は次を使います。
+
+```bash
+npm run export:web
+```
+
+GitHub Pages用のworkflowも追加しています。GitHubの `Actions` タブで `Deploy web preview` を実行すると、Expo Web版が `dist` に書き出され、GitHub Pagesへ公開されます。
+
+```text
+https://hirofumikoizumi-creator.github.io/pocket-senpai-dh/
+```
+
 ## 本番設定
 
 本番ビルドでは `app.config.js` が次の環境変数を読み込みます。未設定、またはダミー値のままの場合は本番ビルド前の検証で失敗します。
