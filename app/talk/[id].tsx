@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
 import { talkScripts } from '../../src/data/talks';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { FavoriteButton } from '../../src/components/FavoriteButton';
 
 export default function TalkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -39,6 +40,16 @@ export default function TalkDetailScreen() {
           <View style={styles.situationBox}>
             <MaterialCommunityIcons name="information-outline" size={14} color={COLORS.primary} />
             <Text style={styles.situationText}>{talk.situation}</Text>
+          </View>
+          <View style={styles.favoriteRow}>
+            <FavoriteButton
+              item={{
+                id: talk.id,
+                type: 'talk',
+                title: talk.title,
+                category: talk.category,
+              }}
+            />
           </View>
         </View>
 
@@ -119,6 +130,9 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginLeft: SPACING.xs,
     flex: 1,
+  },
+  favoriteRow: {
+    marginTop: SPACING.sm,
   },
   dialogueContainer: {
     marginBottom: SPACING.lg,
