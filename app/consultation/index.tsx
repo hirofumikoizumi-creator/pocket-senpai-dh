@@ -16,6 +16,7 @@ import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/u
 import { getAIResponse } from '../../src/services/aiService';
 import { ConsultationResponse } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { FavoriteButton } from '../../src/components/FavoriteButton';
 import { getOnDeviceQwenStatus, OnDeviceQwenStatus } from '../../src/services/onDeviceQwen';
 
 interface Message {
@@ -102,66 +103,81 @@ export default function ConsultationScreen() {
     }, 100);
   };
 
-  const renderAIResponse = (response: ConsultationResponse) => (
-    <View style={styles.responseContainer}>
-      {/* 結論 */}
-      <View style={styles.responseSection}>
-        <View style={styles.responseLabelRow}>
-          <MaterialCommunityIcons name="lightbulb-outline" size={16} color={COLORS.primary} />
-          <Text style={styles.responseLabel}>結論</Text>
+  const renderAIResponse = (response: ConsultationResponse) => {
+    const favoriteTitle = response.category === 'エラー' ? '先輩相談の回答' : response.category;
+
+    return (
+      <View style={styles.responseContainer}>
+        <View style={styles.responseFavoriteRow}>
+          <FavoriteButton
+            item={{
+              id: response.id,
+              type: 'consultation',
+              title: favoriteTitle,
+              category: response.category,
+            }}
+          />
         </View>
-        <Text style={styles.responseText}>{response.conclusion}</Text>
+
+        {/* 結論 */}
+        <View style={styles.responseSection}>
+          <View style={styles.responseLabelRow}>
+            <MaterialCommunityIcons name="lightbulb-outline" size={16} color={COLORS.primary} />
+            <Text style={styles.responseLabel}>結論</Text>
+          </View>
+          <Text style={styles.responseText}>{response.conclusion}</Text>
+        </View>
+
+        {/* 現場での対応 */}
+        {response.fieldAction && (
+          <View style={styles.responseSection}>
+            <View style={styles.responseLabelRow}>
+              <MaterialCommunityIcons name="clipboard-text-outline" size={16} color="#45B7D1" />
+              <Text style={styles.responseLabel}>現場での対応</Text>
+            </View>
+            <Text style={styles.responseText}>{response.fieldAction}</Text>
+          </View>
+        )}
+
+        {/* 患者さんへの言い方 */}
+        {response.patientTalk && (
+          <View style={styles.responseSection}>
+            <View style={styles.responseLabelRow}>
+              <MaterialCommunityIcons name="message-text-outline" size={16} color="#FF6B9D" />
+              <Text style={styles.responseLabel}>患者さんへの言い方</Text>
+            </View>
+            <View style={styles.talkBubble}>
+              <Text style={styles.talkText}>{response.patientTalk}</Text>
+            </View>
+          </View>
+        )}
+
+        {/* 注意点 */}
+        {response.caution && (
+          <View style={styles.responseSection}>
+            <View style={styles.responseLabelRow}>
+              <MaterialCommunityIcons name="alert-circle-outline" size={16} color={COLORS.warning} />
+              <Text style={styles.responseLabel}>注意点</Text>
+            </View>
+            <Text style={styles.responseText}>{response.caution}</Text>
+          </View>
+        )}
+
+        {/* 先輩から一言 */}
+        {response.senpaiMessage && (
+          <View style={[styles.responseSection, styles.senpaiSection]}>
+            <View style={styles.responseLabelRow}>
+              <MaterialCommunityIcons name="heart-outline" size={16} color={COLORS.secondary} />
+              <Text style={styles.responseLabel}>先輩から一言</Text>
+            </View>
+            <Text style={styles.senpaiText}>{response.senpaiMessage}</Text>
+          </View>
+        )}
+
+        <Disclaimer compact />
       </View>
-
-      {/* 現場での対応 */}
-      {response.fieldAction && (
-        <View style={styles.responseSection}>
-          <View style={styles.responseLabelRow}>
-            <MaterialCommunityIcons name="clipboard-text-outline" size={16} color="#45B7D1" />
-            <Text style={styles.responseLabel}>現場での対応</Text>
-          </View>
-          <Text style={styles.responseText}>{response.fieldAction}</Text>
-        </View>
-      )}
-
-      {/* 患者さんへの言い方 */}
-      {response.patientTalk && (
-        <View style={styles.responseSection}>
-          <View style={styles.responseLabelRow}>
-            <MaterialCommunityIcons name="message-text-outline" size={16} color="#FF6B9D" />
-            <Text style={styles.responseLabel}>患者さんへの言い方</Text>
-          </View>
-          <View style={styles.talkBubble}>
-            <Text style={styles.talkText}>{response.patientTalk}</Text>
-          </View>
-        </View>
-      )}
-
-      {/* 注意点 */}
-      {response.caution && (
-        <View style={styles.responseSection}>
-          <View style={styles.responseLabelRow}>
-            <MaterialCommunityIcons name="alert-circle-outline" size={16} color={COLORS.warning} />
-            <Text style={styles.responseLabel}>注意点</Text>
-          </View>
-          <Text style={styles.responseText}>{response.caution}</Text>
-        </View>
-      )}
-
-      {/* 先輩から一言 */}
-      {response.senpaiMessage && (
-        <View style={[styles.responseSection, styles.senpaiSection]}>
-          <View style={styles.responseLabelRow}>
-            <MaterialCommunityIcons name="heart-outline" size={16} color={COLORS.secondary} />
-            <Text style={styles.responseLabel}>先輩から一言</Text>
-          </View>
-          <Text style={styles.senpaiText}>{response.senpaiMessage}</Text>
-        </View>
-      )}
-
-      <Disclaimer compact />
-    </View>
-  );
+    );
+  };
 
   return (
     <>
@@ -411,6 +427,9 @@ const styles = StyleSheet.create({
     ...SHADOWS.sm,
   },
   responseContainer: {},
+  responseFavoriteRow: {
+    marginBottom: SPACING.md,
+  },
   responseSection: {
     marginBottom: SPACING.md,
   },
