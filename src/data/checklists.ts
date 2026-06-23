@@ -1,48 +1,25 @@
 import { ChecklistCategory } from '../types';
 
-export const checklistData: ChecklistCategory[] = [
-  {
-    id: 'cl001',
-    title: '基本準備',
-    icon: 'clipboard-check-outline',
-    items: [
-      { id: 'cl001-1', text: '当日の担当範囲を院内方針で確認', checked: false },
-      { id: 'cl001-2', text: '患者さんへの声かけ内容を確認', checked: false },
-      { id: 'cl001-3', text: '使用器具と準備物を確認', checked: false },
-      { id: 'cl001-4', text: '不明点を歯科医師または先輩へ確認', checked: false },
-    ],
-  },
-  {
-    id: 'cl002',
-    title: '安全確認',
-    icon: 'shield-check-outline',
-    items: [
-      { id: 'cl002-1', text: '判断が必要な項目を自分だけで決めない', checked: false },
-      { id: 'cl002-2', text: '診断・治療・薬剤・麻酔・X線読影に関わる内容は歯科医師へ確認', checked: false },
-      { id: 'cl002-3', text: '気になる観察事項を客観的に記録', checked: false },
-      { id: 'cl002-4', text: '院内の報告ルートを確認', checked: false },
-    ],
-  },
-  {
-    id: 'cl003',
-    title: '感染対策',
-    icon: 'shield-check-outline',
-    items: [
-      { id: 'cl003-1', text: '手指衛生を実施', checked: false },
-      { id: 'cl003-2', text: 'PPEを院内ルールに沿って装着', checked: false },
-      { id: 'cl003-3', text: '器具の洗浄・滅菌状態を確認', checked: false },
-      { id: 'cl003-4', text: '使用後器具の取り扱い手順を確認', checked: false },
-    ],
-  },
-  {
-    id: 'cl004',
-    title: '説明前確認',
-    icon: 'message-text-outline',
-    items: [
-      { id: 'cl004-1', text: '説明目的を一文で整理', checked: false },
-      { id: 'cl004-2', text: '断定表現を避ける', checked: false },
-      { id: 'cl004-3', text: '判断が必要な内容は歯科医師へつなぐ', checked: false },
-      { id: 'cl004-4', text: '患者さんの不明点を確認', checked: false },
-    ],
-  },
-];
+const categories = [
+  ['cl001', '基本準備', 'clipboard-check-outline', ['当日の担当範囲を院内方針で確認', '患者さんへの声かけ内容を確認', '使用器具と準備物を確認', '不明点を歯科医師または先輩へ確認', '記録方法を確認', '次回共有する内容を整理']],
+  ['cl002', '安全確認', 'shield-check-outline', ['判断が必要な項目を自分だけで決めない', '診断・治療・薬剤・麻酔・X線読影に関わる内容は歯科医師へ確認', '気になる観察事項を客観的に記録', '院内の報告ルートを確認', '患者さんの合図を決める', '中断や確認が必要な場面を先に把握']],
+  ['cl003', '感染対策', 'shield-check-outline', ['手指衛生を実施', 'PPEを院内ルールに沿って装着', '器具の洗浄・滅菌状態を確認', '使用後器具の取り扱い手順を確認', '環境整備の範囲を確認', '廃棄物の分別ルールを確認']],
+  ['cl004', '説明前確認', 'message-text-outline', ['説明目的を一文で整理', '断定表現を避ける', '判断が必要な内容は歯科医師へつなぐ', '患者さんの不明点を確認', '専門用語の言い換えを準備', '最後に確認先を明示']],
+  ['cl005', 'TBI準備', 'toothbrush', ['普段の磨き方を聞く', 'できている点を一つ見つける', '改善点を一つに絞る', '鏡で確認する準備をする', '次回確認する場所を決める', '患者さんの生活リズムを聞く']],
+  ['cl006', '小児対応', 'emoticon-happy-outline', ['短い言葉で声をかける', '器具を見せてから使う', 'できたことを具体的に伝える', '怖がる時は無理に進めない', '保護者への説明を短く整理', '判断は歯科医師・院内方針へつなぐ']],
+  ['cl007', '高齢者対応', 'account-heart-outline', ['聞き取りやすい速さで話す', '姿勢や疲れやすさを確認', '義歯や補助具の扱いを確認', '説明を一つずつ区切る', '必要時は家族・院内方針を確認', '転倒や移動の安全に配慮']],
+  ['cl008', 'メンテナンス', 'calendar-check-outline', ['前回からの変化を聞く', 'セルフケアの継続状況を確認', '良い点を先に共有', '次回までの目標を一つに絞る', '受診間隔は歯科医師・院内方針を確認', '記録を客観的に残す']],
+  ['cl009', '相談・報告', 'account-group-outline', ['事実と感想を分けてメモ', '相談したいことを一つに絞る', '指示を復唱する', '報告後の対応を記録', '困りごとを一人で抱えない', '安全に関わる内容は早めに共有']],
+  ['cl010', '診療後振り返り', 'notebook-check-outline', ['今日できたことを一つ書く', '迷った場面を一つ書く', '確認した院内方針をメモ', '次回聞きたいことを整理', '患者さんへの説明で使えた言葉を保存', '次の学習テーマを決める']],
+] as const;
+
+export const checklistData: ChecklistCategory[] = categories.map(([id, title, icon, items]) => ({
+  id,
+  title,
+  icon,
+  items: items.map((text, index) => ({
+    id: `${id}-${index + 1}`,
+    text,
+    checked: false,
+  })),
+}));
