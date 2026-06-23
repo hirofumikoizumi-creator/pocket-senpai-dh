@@ -13,6 +13,7 @@ import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/u
 import { checklistData } from '../../src/data/checklists';
 import { ChecklistCategory, ChecklistItem } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { FavoriteButton } from '../../src/components/FavoriteButton';
 
 const STORAGE_KEY = '@pocket_senpai_checklists';
 
@@ -135,24 +136,34 @@ export default function ChecklistScreen() {
         {isExpanded && (
           <View style={styles.itemsContainer}>
             {item.items.map((checkItem) => (
-              <TouchableOpacity
-                key={checkItem.id}
-                style={styles.checkItem}
-                onPress={() => toggleItem(item.id, checkItem.id)}
-                activeOpacity={0.7}
-              >
-                <MaterialCommunityIcons
-                  name={checkItem.checked ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'}
-                  size={22}
-                  color={checkItem.checked ? COLORS.success : COLORS.textLight}
+              <View key={checkItem.id} style={styles.checkItem}>
+                <TouchableOpacity
+                  style={styles.checkItemToggle}
+                  onPress={() => toggleItem(item.id, checkItem.id)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons
+                    name={checkItem.checked ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'}
+                    size={22}
+                    color={checkItem.checked ? COLORS.success : COLORS.textLight}
+                  />
+                  <Text style={[
+                    styles.checkItemText,
+                    checkItem.checked && styles.checkItemChecked,
+                  ]}>
+                    {checkItem.text}
+                  </Text>
+                </TouchableOpacity>
+                <FavoriteButton
+                  compact
+                  item={{
+                    id: checkItem.id,
+                    type: 'checklist',
+                    title: checkItem.text,
+                    category: item.title,
+                  }}
                 />
-                <Text style={[
-                  styles.checkItemText,
-                  checkItem.checked && styles.checkItemChecked,
-                ]}>
-                  {checkItem.text}
-                </Text>
-              </TouchableOpacity>
+              </View>
             ))}
             {/* リセットボタン */}
             <TouchableOpacity
@@ -275,13 +286,21 @@ const styles = StyleSheet.create({
   checkItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: SPACING.xs,
+  },
+  checkItemToggle: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: SPACING.sm,
+    paddingRight: SPACING.sm,
   },
   checkItemText: {
     fontSize: FONT_SIZES.md,
     color: COLORS.text,
     marginLeft: SPACING.sm,
     flex: 1,
+    lineHeight: 20,
   },
   checkItemChecked: {
     color: COLORS.textLight,
