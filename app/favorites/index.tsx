@@ -67,7 +67,9 @@ export default function FavoritesScreen() {
         </View>
         <TouchableOpacity
           style={styles.removeButton}
-          onPress={() => removeFavorite(item.id)}
+          onPress={() => removeFavorite(item.id, item.type)}
+          accessibilityRole="button"
+          accessibilityLabel="お気に入りから削除"
         >
           <MaterialCommunityIcons name="heart" size={20} color={COLORS.secondary} />
         </TouchableOpacity>
@@ -90,14 +92,14 @@ export default function FavoritesScreen() {
             <MaterialCommunityIcons name="heart-outline" size={60} color={COLORS.textLight} />
             <Text style={styles.emptyTitle}>お気に入りはまだありません</Text>
             <Text style={styles.emptySubtitle}>
-              マニュアルやトーク集で{'\n'}ハートマークをタップして保存しよう
+              気になった内容のハートマークをタップすると{'\n'}ここでまとめて確認できます
             </Text>
           </View>
         ) : (
           <FlatList
             data={favorites}
             renderItem={renderItem}
-            keyExtractor={(item) => `${item.id}-${item.savedAt}`}
+            keyExtractor={(item) => `${item.type}-${item.id}-${item.savedAt}`}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<Disclaimer />}
