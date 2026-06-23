@@ -1,11 +1,11 @@
-const IS_PRODUCTION = process.env.EAS_BUILD_PROFILE === 'production' || process.env.NODE_ENV === 'production';
+const IS_PRODUCTION_BUILD = process.env.EAS_BUILD_PROFILE === 'production';
 
 function readEnv(name, fallback) {
   const value = process.env[name];
   if (value && value.trim()) {
     return value.trim();
   }
-  if (IS_PRODUCTION) {
+  if (IS_PRODUCTION_BUILD) {
     throw new Error(`Missing required production environment variable: ${name}`);
   }
   return fallback;
@@ -41,6 +41,7 @@ module.exports = {
     },
     web: {
       favicon: './assets/favicon.png',
+      output: 'static',
     },
     plugins: [
       'expo-router',
