@@ -4,6 +4,10 @@ import { FavoriteItem } from '../types';
 
 const FAVORITES_KEY = '@pocket_senpai_favorites';
 
+const sameFavorite = (favorite: FavoriteItem, item: Pick<FavoriteItem, 'id' | 'type'>) => {
+  return favorite.id === item.id && favorite.type === item.type;
+};
+
 export function useFavorites() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +35,7 @@ export function useFavorites() {
         ...item,
         savedAt: new Date().toISOString(),
       };
-      const updated = [newItem, ...favorites.filter(f => f.id !== item.id)];
+      const updated = [newItem, ...favorites.filter(f => !sameFavorite(f, item))];
       setFavorites(updated);
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
     } catch (error) {
@@ -39,9 +43,9 @@ export function useFavorites() {
     }
   }, [favorites]);
 
-  const removeFavorite = useCallback(async (id: string) => {
+  const removeFavorite = useCallback(async (id: string, type?: FavoriteItem['type']) => {
     try {
-      const updated = favorites.filter(f => f.id !== id);
+      const updated = favorites.filter(f => (type ? !(f.id === id && f.type === type) : f.id !== id));
       setFavorites(updated);
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
     } catch (error) {
@@ -49,13 +53,13 @@ export function useFavorites() {
     }
   }, [favorites]);
 
-  const isFavorite = useCallback((id: string) => {
-    return favorites.some(f => f.id === id);
+  const isFavorite = useCallback((id: string, type?: FavoriteItem['type']) => {
+    return favorites.some(f => f.id === id && (!type || f.type === type));
   }, [favorites]);
 
   const toggleFavorite = useCallback(async (item: Omit<FavoriteItem, 'savedAt'>) => {
-    if (isFavorite(item.id)) {
-      await removeFavorite(item.id);
+    if (isFavorite(item.id, item.type)) {
+      await removeFavorite(item.id, item.type);
     } else {
       await addFavorite(item);
     }
