@@ -28,14 +28,6 @@ interface MenuCard {
 const menuCards: MenuCard[] = [
   {
     id: '1',
-    title: '先輩相談',
-    subtitle: '困った時に聞いてみよう',
-    icon: 'chat-processing-outline',
-    route: '/consultation',
-    color: '#4ECDC4',
-  },
-  {
-    id: '2',
     title: '患者説明トーク集',
     subtitle: '説明の参考に',
     icon: 'message-text-outline',
@@ -43,7 +35,7 @@ const menuCards: MenuCard[] = [
     color: '#FF6B9D',
   },
   {
-    id: '3',
+    id: '2',
     title: '症例別マニュアル',
     subtitle: '手順を確認',
     icon: 'book-open-variant',
@@ -51,7 +43,7 @@ const menuCards: MenuCard[] = [
     color: '#45B7D1',
   },
   {
-    id: '4',
+    id: '3',
     title: 'チェックリスト',
     subtitle: '準備を確認',
     icon: 'clipboard-check-outline',
@@ -59,7 +51,7 @@ const menuCards: MenuCard[] = [
     color: '#96CEB4',
   },
   {
-    id: '5',
+    id: '4',
     title: 'ミニ学習クイズ',
     subtitle: '知識をチェック',
     icon: 'lightbulb-outline',
@@ -67,7 +59,7 @@ const menuCards: MenuCard[] = [
     color: '#FFEAA7',
   },
   {
-    id: '6',
+    id: '5',
     title: 'お気に入り',
     subtitle: '保存した内容',
     icon: 'heart-outline',
@@ -76,19 +68,51 @@ const menuCards: MenuCard[] = [
   },
 ];
 
+function SenpaiCharacter() {
+  return (
+    <View style={styles.senpaiCharacter}>
+      <View style={styles.characterShadow} />
+      <View style={styles.hairBack} />
+      <View style={styles.hairBun} />
+      <View style={styles.face}>
+        <View style={styles.bangsLeft} />
+        <View style={styles.bangsRight} />
+        <View style={styles.eyeRow}>
+          <View style={styles.eye} />
+          <View style={styles.eye} />
+        </View>
+        <View style={styles.smile} />
+      </View>
+      <View style={styles.neck} />
+      <View style={styles.uniformBody}>
+        <View style={styles.collarLeft} />
+        <View style={styles.collarRight} />
+        <View style={styles.clipboard}>
+          <MaterialCommunityIcons name="clipboard-check-outline" size={20} color={COLORS.primaryDark} />
+        </View>
+      </View>
+      <View style={styles.armLeft} />
+      <View style={styles.armRight} />
+      <View style={styles.legLeft} />
+      <View style={styles.legRight} />
+      <View style={styles.shoeLeft} />
+      <View style={styles.shoeRight} />
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const router = useRouter();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* ヘッダー */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerText}>
           <Text style={styles.appTitle}>ポケット先輩</Text>
           <Text style={styles.appSubtitle}>歯科衛生士のための学習サポート</Text>
         </View>
         <View style={styles.headerIcon}>
-          <MaterialCommunityIcons name="tooth-outline" size={28} color={COLORS.primary} />
+          <MaterialCommunityIcons name="tooth-outline" size={30} color={COLORS.primary} />
         </View>
       </View>
 
@@ -96,24 +120,48 @@ export default function HomeScreen() {
         <Disclaimer compact />
       </View>
 
-      {/* メニューカード */}
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.cardsContainer}
+        contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
+        <TouchableOpacity
+          style={styles.featureCard}
+          onPress={() => router.push('/consultation' as any)}
+          activeOpacity={0.82}
+        >
+          <View style={styles.featureContent}>
+            <View style={styles.featureBadge}>
+              <MaterialCommunityIcons name="star-outline" size={14} color={COLORS.primaryDark} />
+              <Text style={styles.featureBadgeText}>目玉機能</Text>
+            </View>
+            <Text style={styles.featureTitle}>先輩相談AIチャット</Text>
+            <Text style={styles.featureDescription}>仕事の不安、説明の迷い、成長の悩みを先輩に相談</Text>
+            <View style={styles.featureButton}>
+              <Text style={styles.featureButtonText}>相談する</Text>
+              <MaterialCommunityIcons name="arrow-right" size={18} color={COLORS.white} />
+            </View>
+          </View>
+
+          <View style={styles.mentorIllustration}>
+            <View style={styles.mentorHalo} />
+            <SenpaiCharacter />
+          </View>
+        </TouchableOpacity>
+
+        <Text style={styles.sectionTitle}>学習メニュー</Text>
         <View style={styles.cardsGrid}>
           {menuCards.map((card) => (
             <TouchableOpacity
               key={card.id}
               style={styles.card}
               onPress={() => router.push(card.route as any)}
-              activeOpacity={0.7}
+              activeOpacity={0.72}
             >
-              <View style={[styles.cardIconContainer, { backgroundColor: card.color + '20' }]}>
+              <View style={[styles.cardIconContainer, { backgroundColor: card.color + '18' }]}>
                 <MaterialCommunityIcons
                   name={card.icon as any}
-                  size={28}
+                  size={30}
                   color={card.color}
                 />
               </View>
@@ -123,9 +171,8 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* 広告スペース（バナー広告用） */}
         <View style={styles.adBanner}>
-          <Text style={styles.adText}>広告スペース</Text>
+          <Text style={styles.adText}>Ad Banner (banner)</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -142,83 +189,375 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
+    paddingTop: SPACING.xl,
     paddingBottom: SPACING.sm,
   },
+  headerText: {
+    flex: 1,
+    paddingRight: SPACING.md,
+  },
   appTitle: {
-    fontSize: FONT_SIZES.title,
-    fontWeight: '700',
+    fontSize: 30,
+    fontWeight: '800',
     color: COLORS.text,
   },
   appSubtitle: {
     fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
     color: COLORS.textSecondary,
-    marginTop: 2,
+    marginTop: 4,
   },
   headerIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     backgroundColor: COLORS.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   disclaimerWrapper: {
     marginHorizontal: SPACING.lg,
-    marginVertical: SPACING.sm,
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
   scrollView: {
     flex: 1,
   },
-  cardsContainer: {
+  contentContainer: {
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.xxl,
+  },
+  featureCard: {
+    minHeight: 190,
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
+    flexDirection: 'row',
+    overflow: 'hidden',
+    ...SHADOWS.md,
+  },
+  featureContent: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: SPACING.sm,
+  },
+  featureBadge: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 5,
+    marginBottom: SPACING.md,
+  },
+  featureBadgeText: {
+    color: COLORS.primaryDark,
+    fontSize: FONT_SIZES.xs,
+    fontWeight: '700',
+  },
+  featureTitle: {
+    color: COLORS.text,
+    fontSize: FONT_SIZES.xxl,
+    fontWeight: '800',
+    lineHeight: 29,
+    marginBottom: SPACING.sm,
+  },
+  featureDescription: {
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.md,
+    fontWeight: '500',
+    lineHeight: 23,
+    marginBottom: SPACING.lg,
+  },
+  featureButton: {
+    alignSelf: 'flex-start',
+    minWidth: 126,
+    height: 50,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: COLORS.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+  },
+  featureButtonText: {
+    color: COLORS.white,
+    fontSize: FONT_SIZES.md,
+    fontWeight: '800',
+  },
+  mentorIllustration: {
+    width: 112,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mentorHalo: {
+    position: 'absolute',
+    width: 104,
+    height: 104,
+    borderRadius: 52,
+    backgroundColor: COLORS.surfaceLight,
+    top: 32,
+  },
+  senpaiCharacter: {
+    width: 104,
+    height: 150,
+    alignItems: 'center',
+    position: 'relative',
+  },
+  characterShadow: {
+    position: 'absolute',
+    bottom: 0,
+    width: 58,
+    height: 9,
+    borderRadius: 999,
+    backgroundColor: 'rgba(45, 55, 72, 0.12)',
+  },
+  hairBack: {
+    position: 'absolute',
+    top: 6,
+    width: 54,
+    height: 58,
+    borderRadius: 27,
+    backgroundColor: '#A86F4C',
+  },
+  hairBun: {
+    position: 'absolute',
+    top: 2,
+    right: 21,
+    width: 23,
+    height: 23,
+    borderRadius: 12,
+    backgroundColor: '#8B5E3C',
+    borderWidth: 2,
+    borderColor: '#B98057',
+  },
+  face: {
+    position: 'absolute',
+    top: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFE4D4',
+    borderWidth: 2,
+    borderColor: '#F7C7AF',
+    alignItems: 'center',
+  },
+  bangsLeft: {
+    position: 'absolute',
+    top: -5,
+    left: 4,
+    width: 24,
+    height: 18,
+    borderTopLeftRadius: 20,
+    borderBottomRightRadius: 16,
+    backgroundColor: '#8B5E3C',
+    transform: [{ rotate: '-16deg' }],
+  },
+  bangsRight: {
+    position: 'absolute',
+    top: -4,
+    right: 5,
+    width: 20,
+    height: 15,
+    borderTopRightRadius: 18,
+    borderBottomLeftRadius: 14,
+    backgroundColor: '#A86F4C',
+    transform: [{ rotate: '18deg' }],
+  },
+  eyeRow: {
+    flexDirection: 'row',
+    gap: 13,
+    marginTop: 23,
+  },
+  eye: {
+    width: 4,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: COLORS.text,
+  },
+  smile: {
+    width: 13,
+    height: 7,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D98677',
+    borderRadius: 8,
+    marginTop: 4,
+  },
+  neck: {
+    position: 'absolute',
+    top: 61,
+    width: 16,
+    height: 14,
+    backgroundColor: '#FFD8C4',
+  },
+  uniformBody: {
+    position: 'absolute',
+    top: 70,
+    width: 58,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: '#E3F6F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  collarLeft: {
+    position: 'absolute',
+    top: 0,
+    left: 15,
+    width: 16,
+    height: 16,
+    borderBottomRightRadius: 12,
+    backgroundColor: '#EEFDF9',
+    transform: [{ rotate: '22deg' }],
+  },
+  collarRight: {
+    position: 'absolute',
+    top: 0,
+    right: 15,
+    width: 16,
+    height: 16,
+    borderBottomLeftRadius: 12,
+    backgroundColor: '#EEFDF9',
+    transform: [{ rotate: '-22deg' }],
+  },
+  clipboard: {
+    width: 30,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#CFF4ED',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  armLeft: {
+    position: 'absolute',
+    top: 84,
+    left: 20,
+    width: 13,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+    transform: [{ rotate: '16deg' }],
+  },
+  armRight: {
+    position: 'absolute',
+    top: 84,
+    right: 20,
+    width: 13,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+    transform: [{ rotate: '-16deg' }],
+  },
+  legLeft: {
+    position: 'absolute',
+    top: 120,
+    left: 43,
+    width: 10,
+    height: 24,
+    borderRadius: 5,
+    backgroundColor: '#F9FFFF',
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  legRight: {
+    position: 'absolute',
+    top: 120,
+    right: 43,
+    width: 10,
+    height: 24,
+    borderRadius: 5,
+    backgroundColor: '#F9FFFF',
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  shoeLeft: {
+    position: 'absolute',
+    bottom: 4,
+    left: 38,
+    width: 16,
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  shoeRight: {
+    position: 'absolute',
+    bottom: 4,
+    right: 38,
+    width: 16,
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: '#E3F6F2',
+  },
+  sectionTitle: {
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.md,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
   },
   cardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: SPACING.md,
   },
   card: {
     width: CARD_WIDTH,
+    minHeight: 172,
     backgroundColor: COLORS.white,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.lg,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg,
+    justifyContent: 'center',
     ...SHADOWS.md,
   },
   cardIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: BORDER_RADIUS.md,
+    width: 58,
+    height: 58,
+    borderRadius: BORDER_RADIUS.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
   cardTitle: {
-    fontSize: FONT_SIZES.lg,
-    fontWeight: '600',
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: '800',
     color: COLORS.text,
-    marginBottom: 4,
+    marginBottom: SPACING.sm,
   },
   cardSubtitle: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
     color: COLORS.textSecondary,
   },
   adBanner: {
-    height: 50,
+    height: 76,
     backgroundColor: COLORS.surfaceLight,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.md,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: SPACING.md,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#CDEFE9',
     borderStyle: 'dashed',
   },
   adText: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
     color: COLORS.textLight,
   },
 });

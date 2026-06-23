@@ -41,6 +41,50 @@ npx expo start
 npx tsc --noEmit
 ```
 
+## ブラウザでテスト
+
+ローカルでWeb版を起動する場合は次を使います。
+
+```bash
+npm install
+npm run web
+```
+
+静的Web版を書き出す場合は次を使います。
+
+```bash
+npm run export:web
+```
+
+GitHub Pages用のworkflowも追加しています。GitHubの `Actions` タブで `Deploy web preview` を実行すると、Expo Web版が `dist` に書き出され、GitHub Pagesへ公開されます。
+
+```text
+https://hirofumikoizumi-creator.github.io/pocket-senpai-dh/
+```
+
+## 本番設定
+
+本番ビルドでは `app.config.js` が次の環境変数を読み込みます。未設定、またはダミー値のままの場合は本番ビルド前の検証で失敗します。
+
+```text
+ADMOB_IOS_APP_ID
+ADMOB_ANDROID_APP_ID
+FIREBASE_API_KEY
+FIREBASE_AUTH_DOMAIN
+FIREBASE_PROJECT_ID
+FIREBASE_STORAGE_BUCKET
+FIREBASE_MESSAGING_SENDER_ID
+FIREBASE_APP_ID
+```
+
+検証だけを実行する場合は次を使います。
+
+```bash
+npm run validate:production-config
+```
+
+EAS Build では、これらの値を EAS environment variables / secrets に登録してから production profile を実行してください。添付IPAと同じ本番アプリに合わせる場合は、IPAに含まれる広告IDやFirebase設定と同じ値を登録します。
+
 ## オンデバイスQwen3
 
 ローカルLLM実行には `llama.rn` を使います。クラウドLLMには接続しません。
