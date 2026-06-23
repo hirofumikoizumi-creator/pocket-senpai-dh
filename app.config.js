@@ -1,0 +1,94 @@
+const IS_PRODUCTION = process.env.EAS_BUILD_PROFILE === 'production' || process.env.NODE_ENV === 'production';
+
+function readEnv(name, fallback) {
+  const value = process.env[name];
+  if (value && value.trim()) {
+    return value.trim();
+  }
+  if (IS_PRODUCTION) {
+    throw new Error(`Missing required production environment variable: ${name}`);
+  }
+  return fallback;
+}
+
+const admobIosAppId = readEnv('ADMOB_IOS_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
+const admobAndroidAppId = readEnv('ADMOB_ANDROID_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
+
+module.exports = {
+  expo: {
+    name: 'ポケット先輩（歯科衛生士）',
+    slug: 'pocket-senpai-dh',
+    version: '1.0.0',
+    orientation: 'portrait',
+    icon: './assets/icon.png',
+    userInterfaceStyle: 'light',
+    scheme: 'pocket-senpai',
+    ios: {
+      supportsTablet: false,
+      bundleIdentifier: 'com.gsw.pocketsenpai.shikaeiseishi',
+      buildNumber: '1',
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+        NSUserTrackingUsageDescription: '広告の最適化のために使用します',
+      },
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: './assets/adaptive-icon.png',
+        backgroundColor: '#F0FDF9',
+      },
+      package: 'com.pocketsenpai.dh',
+    },
+    web: {
+      favicon: './assets/favicon.png',
+    },
+    plugins: [
+      'expo-router',
+      'expo-font',
+      [
+        'expo-build-properties',
+        {
+          ios: {
+            deploymentTarget: '16.4',
+            useFrameworks: 'static',
+          },
+        },
+      ],
+      [
+        'llama.rn',
+        {
+          enableEntitlements: true,
+          entitlementsProfile: 'production',
+          forceCxx20: true,
+          enableOpenCLAndHexagon: false,
+        },
+      ],
+      [
+        'react-native-google-mobile-ads',
+        {
+          iosAppId: admobIosAppId,
+          androidAppId: admobAndroidAppId,
+        },
+      ],
+      [
+        'expo-splash-screen',
+        {
+          image: './assets/splash-icon.png',
+          resizeMode: 'contain',
+          backgroundColor: '#F0FDF9',
+        },
+      ],
+    ],
+    extra: {
+      eas: {
+        projectId: 'e599585a-ba45-4972-a502-a4bec2cee1e4',
+      },
+      firebaseApiKey: readEnv('FIREBASE_API_KEY', 'YOUR_FIREBASE_API_KEY'),
+      firebaseAuthDomain: readEnv('FIREBASE_AUTH_DOMAIN', 'YOUR_PROJECT.firebaseapp.com'),
+      firebaseProjectId: readEnv('FIREBASE_PROJECT_ID', 'YOUR_PROJECT_ID'),
+      firebaseStorageBucket: readEnv('FIREBASE_STORAGE_BUCKET', 'YOUR_PROJECT.appspot.com'),
+      firebaseMessagingSenderId: readEnv('FIREBASE_MESSAGING_SENDER_ID', 'YOUR_SENDER_ID'),
+      firebaseAppId: readEnv('FIREBASE_APP_ID', 'YOUR_APP_ID'),
+    },
+  },
+};
