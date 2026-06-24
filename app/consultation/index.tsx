@@ -41,6 +41,35 @@ const suggestedQuestions = [
   'TBIのコツを知りたい',
 ];
 
+function SenpaiIllustration({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <View style={styles.senpaiMiniAvatar}>
+        <View style={styles.senpaiMiniHair} />
+        <View style={styles.senpaiMiniFace}>
+          <View style={[styles.senpaiMiniEye, styles.senpaiMiniEyeLeft]} />
+          <View style={[styles.senpaiMiniEye, styles.senpaiMiniEyeRight]} />
+          <View style={styles.senpaiMiniSmile} />
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.senpaiIllustration}>
+      <View style={styles.senpaiHair} />
+      <View style={styles.senpaiFace}>
+        <View style={[styles.senpaiEye, styles.senpaiEyeLeft]} />
+        <View style={[styles.senpaiEye, styles.senpaiEyeRight]} />
+        <View style={styles.senpaiSmile} />
+      </View>
+      <View style={styles.senpaiBody}>
+        <View style={styles.senpaiBook} />
+      </View>
+    </View>
+  );
+}
+
 export default function ConsultationScreen() {
   const router = useRouter();
   const { isPremium } = useSubscription();
@@ -204,7 +233,7 @@ export default function ConsultationScreen() {
     <>
       <Stack.Screen
         options={{
-          title: '先輩相談',
+          title: '先輩相談AIチャット',
           headerBackTitle: '戻る',
         }}
       />
@@ -237,14 +266,22 @@ export default function ConsultationScreen() {
               無料チャット: 本日あと{chatLimit.remaining}回 / {FREE_PLAN_LIMITS.dailyChatMessages}回
             </Text>
           )}
+
+          <View style={styles.senpaiIntroCard}>
+            <SenpaiIllustration />
+            <View style={styles.senpaiIntroTextContainer}>
+              <Text style={styles.senpaiIntroTitle}>今日はどうしたの？</Text>
+              <Text style={styles.senpaiIntroText}>
+                焦らなくて大丈夫。状況を一緒に整理して、現場で使いやすい言い方まで考えよう。
+              </Text>
+            </View>
+          </View>
+
           {messages.length === 0 && !chatLimit.canUse && !isPremium && (
             <PremiumPrompt title="本日の無料相談は終了しました" message="プレミアムでは先輩相談AIチャットを無制限に利用できます。" />
           )}
           {messages.length === 0 && (
             <View style={styles.welcomeContainer}>
-              <View style={styles.welcomeIconContainer}>
-                <MaterialCommunityIcons name="chat-processing-outline" size={40} color={COLORS.primary} />
-              </View>
               <Text style={styles.welcomeTitle}>先輩に相談してみよう</Text>
               <Text style={styles.welcomeSubtitle}>
                 仕事の悩みや分からないことを{'\n'}気軽に聞いてみてね
@@ -277,7 +314,7 @@ export default function ConsultationScreen() {
               ) : (
                 <View style={styles.aiMessageContainer}>
                   <View style={styles.aiAvatar}>
-                    <MaterialCommunityIcons name="account-heart" size={20} color={COLORS.primary} />
+                    <SenpaiIllustration compact />
                   </View>
                   <View style={styles.aiBubble}>
                     {message.response && renderAIResponse(message.response)}
@@ -290,7 +327,7 @@ export default function ConsultationScreen() {
           {isLoading && (
             <View style={styles.loadingContainer}>
               <View style={styles.aiAvatar}>
-                <MaterialCommunityIcons name="account-heart" size={20} color={COLORS.primary} />
+                <SenpaiIllustration compact />
               </View>
               <View style={styles.loadingBubble}>
                 <ActivityIndicator size="small" color={COLORS.primary} />
@@ -365,18 +402,151 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     paddingHorizontal: SPACING.xs,
   },
+  senpaiIntroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.xl,
+    borderWidth: 1,
+    borderColor: '#D6F3EE',
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.sm,
+    marginBottom: SPACING.lg,
+    ...SHADOWS.md,
+  },
+  senpaiIntroTextContainer: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
+  senpaiIntroTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  senpaiIntroText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
+    fontWeight: '600',
+  },
+  senpaiIllustration: {
+    width: 86,
+    height: 128,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  senpaiHair: {
+    position: 'absolute',
+    top: 0,
+    width: 70,
+    height: 54,
+    borderRadius: 34,
+    backgroundColor: '#9B674E',
+  },
+  senpaiFace: {
+    position: 'absolute',
+    top: 18,
+    width: 62,
+    height: 66,
+    borderRadius: 31,
+    backgroundColor: '#FFD9C4',
+    borderWidth: 3,
+    borderColor: COLORS.white,
+  },
+  senpaiEye: {
+    position: 'absolute',
+    top: 30,
+    width: 6,
+    height: 8,
+    borderRadius: 3,
+    backgroundColor: '#3A2A24',
+  },
+  senpaiEyeLeft: {
+    left: 17,
+  },
+  senpaiEyeRight: {
+    right: 17,
+  },
+  senpaiSmile: {
+    position: 'absolute',
+    left: 25,
+    top: 44,
+    width: 14,
+    height: 7,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D77B78',
+    borderRadius: 7,
+  },
+  senpaiBody: {
+    width: 58,
+    height: 70,
+    borderRadius: 18,
+    backgroundColor: COLORS.white,
+    borderWidth: 2,
+    borderColor: '#DFF3EF',
+    alignItems: 'center',
+    paddingTop: SPACING.md,
+  },
+  senpaiBook: {
+    width: 32,
+    height: 24,
+    borderRadius: 6,
+    backgroundColor: '#77D8D0',
+    borderWidth: 3,
+    borderColor: '#E9FFFB',
+  },
+  senpaiMiniAvatar: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  senpaiMiniHair: {
+    position: 'absolute',
+    top: 3,
+    width: 36,
+    height: 28,
+    borderRadius: 18,
+    backgroundColor: '#9B674E',
+  },
+  senpaiMiniFace: {
+    width: 32,
+    height: 34,
+    borderRadius: 16,
+    backgroundColor: '#FFD9C4',
+    borderWidth: 2,
+    borderColor: COLORS.white,
+    marginTop: 8,
+  },
+  senpaiMiniEye: {
+    position: 'absolute',
+    top: 15,
+    width: 4,
+    height: 5,
+    borderRadius: 2,
+    backgroundColor: '#3A2A24',
+  },
+  senpaiMiniEyeLeft: {
+    left: 8,
+  },
+  senpaiMiniEyeRight: {
+    right: 8,
+  },
+  senpaiMiniSmile: {
+    position: 'absolute',
+    top: 23,
+    left: 13,
+    width: 8,
+    height: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D77B78',
+    borderRadius: 4,
+  },
   welcomeContainer: {
     alignItems: 'center',
-    paddingTop: SPACING.xl,
-  },
-  welcomeIconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: COLORS.surfaceLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SPACING.md,
+    paddingTop: SPACING.sm,
   },
   welcomeTitle: {
     fontSize: FONT_SIZES.xl,
@@ -440,14 +610,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   aiAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: COLORS.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: SPACING.sm,
     marginTop: 4,
+    overflow: 'hidden',
   },
   aiBubble: {
     flex: 1,
