@@ -8,13 +8,20 @@ import {
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { manuals } from '../../src/data/manuals';
 import { Disclaimer } from '../../src/components/Disclaimer';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { AdBanner } from '../../src/components/AdBanner';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 export default function ManualDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const manual = manuals.find(m => m.id === id);
+  const { isPremium } = useSubscription();
+  const manualIndex = manuals.findIndex(m => m.id === id);
+  const manual = manuals[manualIndex];
+  const isLocked = !isPremium && manualIndex >= FREE_PLAN_LIMITS.contentItems;
 
   if (!manual) {
     return (
@@ -34,71 +41,70 @@ export default function ManualDetailScreen() {
       />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <Disclaimer />
-        {/* タイトル */}
-        <Text style={styles.title}>{manual.title}</Text>
-        <Text style={styles.overview}>{manual.overview}</Text>
-        <View style={styles.favoriteRow}>
-          <FavoriteButton
-            item={{
-              id: manual.id,
-              type: 'manual',
-              title: manual.title,
-              category: manual.category,
-            }}
-          />
-        </View>
+        {isLocked ? (
+          <PremiumPrompt title="マニュアルを全件解放" message="無料プランでは10件まで閲覧できます。プレミアムでは症例別マニュアルをすべて利用できます。" />
+        ) : (
+          <>
+            <Text style={styles.title}>{manual.title}</Text>
+            <Text style={styles.overview}>{manual.overview}</Text>
+            <View style={styles.favoriteRow}>
+              <FavoriteButton
+                item={{
+                  id: manual.id,
+                  type: 'manual',
+                  title: manual.title,
+                  category: manual.category,
+                }}
+              />
+            </View>
 
-        {/* 手順 */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="format-list-numbered" size={18} color={COLORS.primary} />
-            <Text style={styles.sectionTitle}>手順</Text>
-          </View>
-          {manual.steps.map((step) => (
-            <View key={step.order} style={styles.stepCard}>
-              <View style={styles.stepNumber}>
-                <Text style={styles.stepNumberText}>{step.order}</Text>
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons name="format-list-numbered" size={18} color={COLORS.primary} />
+                <Text style={styles.sectionTitle}>手順</Text>
               </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>{step.title}</Text>
-                <Text style={styles.stepDescription}>{step.description}</Text>
+              {manual.steps.map((step) => (
+                <View key={step.order} style={styles.stepCard}>
+                  <View style={styles.stepNumber}>
+                    <Text style={styles.stepNumberText}>{step.order}</Text>
+                  </View>
+                  <View style={styles.stepContent}>
+                    <Text style={styles.stepTitle}>{step.title}</Text>
+                    <Text style={styles.stepDescription}>{step.description}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <AdBanner size="banner" style={styles.adSpace} />
+
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons name="lightbulb-outline" size={18} color="#FECA57" />
+                <Text style={styles.sectionTitle}>ポイント</Text>
               </View>
+              {manual.tips.map((tip, index) => (
+                <View key={index} style={styles.tipItem}>
+                  <MaterialCommunityIcons name="check-circle-outline" size={16} color={COLORS.success} />
+                  <Text style={styles.tipText}>{tip}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
 
-        {/* 広告スペース（インライン） */}
-        <View style={styles.adSpace}>
-          <Text style={styles.adText}>広告スペース</Text>
-        </View>
-
-        {/* ポイント */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="lightbulb-outline" size={18} color="#FECA57" />
-            <Text style={styles.sectionTitle}>ポイント</Text>
-          </View>
-          {manual.tips.map((tip, index) => (
-            <View key={index} style={styles.tipItem}>
-              <MaterialCommunityIcons name="check-circle-outline" size={16} color={COLORS.success} />
-              <Text style={styles.tipText}>{tip}</Text>
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons name="alert-circle-outline" size={18} color={COLORS.warning} />
+                <Text style={styles.sectionTitle}>注意点</Text>
+              </View>
+              {manual.cautions.map((caution, index) => (
+                <View key={index} style={styles.cautionItem}>
+                  <MaterialCommunityIcons name="alert-outline" size={16} color={COLORS.warning} />
+                  <Text style={styles.cautionText}>{caution}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-
-        {/* 注意点 */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="alert-circle-outline" size={18} color={COLORS.warning} />
-            <Text style={styles.sectionTitle}>注意点</Text>
-          </View>
-          {manual.cautions.map((caution, index) => (
-            <View key={index} style={styles.cautionItem}>
-              <MaterialCommunityIcons name="alert-outline" size={16} color={COLORS.warning} />
-              <Text style={styles.cautionText}>{caution}</Text>
-            </View>
-          ))}
-        </View>
+          </>
+        )}
 
         <Disclaimer compact />
       </ScrollView>
@@ -209,18 +215,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   adSpace: {
-    height: 50,
-    backgroundColor: COLORS.surfaceLight,
-    borderRadius: BORDER_RADIUS.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginVertical: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderStyle: 'dashed',
-  },
-  adText: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
   },
 });
