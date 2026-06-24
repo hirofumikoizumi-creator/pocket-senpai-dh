@@ -1,8 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FavoriteItem } from '../types';
 import { useFavorites } from '../hooks/useFavorites';
+import { useSubscription } from '../hooks/useSubscription';
+import { FREE_PLAN_LIMITS } from '../constants/plans';
 import { BORDER_RADIUS, COLORS, FONT_SIZES, SPACING } from '../utils/theme';
 
 interface FavoriteButtonProps {
@@ -11,13 +14,31 @@ interface FavoriteButtonProps {
 }
 
 export function FavoriteButton({ item, compact = false }: FavoriteButtonProps) {
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const router = useRouter();
+  const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const { isPremium } = useSubscription();
   const active = isFavorite(item.id, item.type);
+
+  const handlePress = () => {
+    if (!active && !isPremium && favorites.length >= FREE_PLAN_LIMITS.favorites) {
+      Alert.alert(
+        'お気に入り上限に達しました',
+        `無料プランではお気に入り登録は${FREE_PLAN_LIMITS.favorites}件までです。プレミアムでは無制限に保存できます。`,
+        [
+          { text: 'あとで', style: 'cancel' },
+          { text: 'プレミアムを見る', onPress: () => router.push('/premium' as any) },
+        ]
+      );
+      return;
+    }
+
+    toggleFavorite(item);
+  };
 
   return (
     <TouchableOpacity
       style={[styles.button, compact && styles.compactButton, active && styles.activeButton]}
-      onPress={() => toggleFavorite(item)}
+      onPress={handlePress}
       activeOpacity={0.7}
       accessibilityRole="button"
       accessibilityLabel={active ? 'お気に入りから削除' : 'お気に入り登録'}
