@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="2796" viewBox="0 0 1290 2796">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4FFFC"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#2B5C57" flood-opacity="0.16"/>
+    </filter>
+    <style><![CDATA[
+      .jp { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; }
+      .title { font-size: 78px; font-weight: 800; fill: #243040; }
+      .sub { font-size: 34px; font-weight: 700; fill: #6F7F8E; }
+      .body { font-size: 38px; font-weight: 700; fill: #52656F; }
+      .small { font-size: 30px; font-weight: 700; fill: #6F7F8E; }
+      .button { font-size: 44px; font-weight: 850; fill: #FFFFFF; }
+      .label { font-size: 36px; font-weight: 800; fill: #243040; }
+      .price { font-size: 92px; font-weight: 900; fill: #42D1C7; }
+    ]]></style>
+  </defs>
+
+  <rect width="1290" height="2796" fill="url(#bg)"/>
+  <circle cx="1040" cy="310" r="180" fill="#E7FBF6"/>
+  <circle cx="160" cy="2320" r="250" fill="#FFF3F9" opacity="0.65"/>
+
+  <!-- iPhone status/header area -->
+  <text x="96" y="92" class="jp label" font-size="44">20:10</text>
+  <rect x="1094" y="52" width="82" height="36" rx="18" fill="none" stroke="#243040" stroke-width="5"/>
+  <rect x="1180" y="63" width="8" height="16" rx="4" fill="#243040"/>
+  <rect x="1102" y="60" width="58" height="20" rx="10" fill="#243040"/>
+  <text x="645" y="156" text-anchor="middle" class="jp label" font-size="44">プレミアム</text>
+
+  <!-- hero card -->
+  <rect x="72" y="250" width="1146" height="470" rx="46" fill="#FFFFFF" filter="url(#shadow)"/>
+  <circle cx="645" cy="390" r="78" fill="#EAFFFB"/>
+  <path d="M606 405 L626 355 L645 397 L666 355 L686 405 L674 433 H618 Z" fill="none" stroke="#239B95" stroke-width="12" stroke-linejoin="round"/>
+  <text x="645" y="525" text-anchor="middle" class="jp title">ポケット先輩プレミアム</text>
+  <text x="645" y="638" text-anchor="middle" class="jp price">月額500円</text>
+
+  <!-- description -->
+  <text x="645" y="810" text-anchor="middle" class="jp body">仕事中の確認と学習を、制限なく使えるプランです。</text>
+
+  <!-- benefits card -->
+  <rect x="72" y="890" width="1146" height="630" rx="32" fill="#FFFFFF" filter="url(#shadow)" stroke="#D6F3EE" stroke-width="3"/>
+  <text x="120" y="982" class="jp label">有料プランでできること</text>
+
+  <g class="jp body">
+    <circle cx="132" cy="1074" r="18" fill="#42D1C7"/><path d="M122 1074 L130 1084 L146 1064" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="178" y="1088">先輩相談AIチャット無制限</text>
+    <circle cx="132" cy="1174" r="18" fill="#42D1C7"/><path d="M122 1174 L130 1184 L146 1164" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="178" y="1188">患者説明トーク集を全件閲覧</text>
+    <circle cx="132" cy="1274" r="18" fill="#42D1C7"/><path d="M122 1274 L130 1284 L146 1264" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="178" y="1288">症例別マニュアル・チェックリストを全件利用</text>
+    <circle cx="132" cy="1374" r="18" fill="#42D1C7"/><path d="M122 1374 L130 1384 L146 1364" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="178" y="1388">お気に入り登録無制限、広告なし</text>
+  </g>
+
+  <!-- free plan card -->
+  <rect x="72" y="1578" width="1146" height="390" rx="32" fill="#FFFFFF" filter="url(#shadow)"/>
+  <text x="120" y="1668" class="jp label">無料プラン</text>
+  <text x="120" y="1758" class="jp body">チャット1日5回、各コンテンツ10件まで</text>
+  <text x="120" y="1840" class="jp body">クイズ1日5問、お気に入り10件まで、広告あり</text>
+
+  <!-- purchase controls -->
+  <rect x="112" y="2070" width="1066" height="132" rx="66" fill="#42D1C7" filter="url(#shadow)"/>
+  <text x="645" y="2154" text-anchor="middle" class="jp button">月額500円で始める</text>
+
+  <rect x="112" y="2242" width="1066" height="108" rx="54" fill="#FFFFFF" stroke="#D6F3EE" stroke-width="3"/>
+  <text x="645" y="2312" text-anchor="middle" class="jp label" fill="#6F7F8E">購入を復元</text>
+
+  <text x="645" y="2450" text-anchor="middle" class="jp small">本アプリは教育・学習支援を目的とした参考情報を提供します。</text>
+  <text x="645" y="2502" text-anchor="middle" class="jp small">診断・治療を行うものではありません。</text>
+
+  <!-- home indicator -->
+  <rect x="465" y="2688" width="360" height="14" rx="7" fill="#111111"/>
+</svg>
