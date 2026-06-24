@@ -24,6 +24,7 @@
 - React Native Paper
 - AsyncStorage
 - RevenueCat
+- Google AdMob
 
 ## 主な機能
 
@@ -88,6 +89,28 @@ npm run validate:production-config
 ```
 
 EAS Build では、これらの値を EAS environment variables / secrets に登録してから production profile を実行してください。添付IPAと同じ本番アプリに合わせる場合は、IPAに含まれる広告IDやFirebase設定と同じ値を登録します。
+
+## AdMob
+
+無料プランでは広告を表示し、プレミアムでは広告を非表示にします。
+
+現在の広告ユニットIDは次の値を使用します。
+
+```text
+banner_main: ca-app-pub-5840457424714744/1680532309
+interstitial_main: ca-app-pub-5840457424714744/6338530833
+reward_main: ca-app-pub-5840457424714744/6918370940
+```
+
+`ADMOB_IOS_APP_ID` / `ADMOB_ANDROID_APP_ID` には、広告ユニットIDではなく AdMob のアプリIDを設定してください。形式は `ca-app-pub-...~...` です。
+
+必要に応じて広告ユニットIDも EAS environment variables で上書きできます。
+
+```text
+ADMOB_BANNER_UNIT_ID
+ADMOB_INTERSTITIAL_UNIT_ID
+ADMOB_REWARDED_UNIT_ID
+```
 
 ## RevenueCat / アプリ内課金
 
