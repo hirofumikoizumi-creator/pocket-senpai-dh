@@ -21,6 +21,21 @@ const DEFAULT_STATE: SubscriptionState = {
   isRevenueCatConfigured: false,
 };
 
+function getFallbackState(savedState: SubscriptionState, isRevenueCatConfigured: boolean): SubscriptionState {
+  if (savedState.source === 'development' && savedState.isPremium) {
+    return {
+      isPremium: true,
+      source: 'development',
+      isRevenueCatConfigured,
+    };
+  }
+
+  return {
+    ...DEFAULT_STATE,
+    isRevenueCatConfigured,
+  };
+}
+
 export function useSubscription() {
   const [state, setState] = useState<SubscriptionState>(DEFAULT_STATE);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,24 +47,24 @@ export function useSubscription() {
       const savedState = saved ? JSON.parse(saved) as SubscriptionState : DEFAULT_STATE;
 
       if (!isRevenueCatAvailable()) {
-        setState({
-          ...savedState,
-          isRevenueCatConfigured: false,
-        });
+        const nextState = getFallbackState(savedState, false);
+        setState(nextState);
+        await AsyncStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(nextState));
         return;
       }
 
       const revenueCatStatus = await getRevenueCatStatus();
       const nextState: SubscriptionState = revenueCatStatus.isPremium
         ? { isPremium: true, source: 'store', isRevenueCatConfigured: revenueCatStatus.isConfigured }
-        : { isPremium: savedState.source === 'development' && savedState.isPremium, source: savedState.source === 'development' && savedState.isPremium ? 'development' : 'free', isRevenueCatConfigured: revenueCatStatus.isConfigured };
+        : getFallbackState(savedState, revenueCatStatus.isConfigured);
 
       setState(nextState);
       await AsyncStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(nextState));
     } catch (error) {
       console.error('Failed to refresh subscription:', error);
       const saved = await AsyncStorage.getItem(SUBSCRIPTION_KEY);
-      setState(saved ? JSON.parse(saved) : DEFAULT_STATE);
+      const savedState = saved ? JSON.parse(saved) as SubscriptionState : DEFAULT_STATE;
+      setState(getFallbackState(savedState, false));
     } finally {
       setIsLoading(false);
     }
