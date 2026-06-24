@@ -5,7 +5,7 @@ export const FREE_PLAN_LIMITS = {
   favorites: 10,
 };
 
-export const PREMIUM_PRODUCT_ID = 'pocket_senpai_monthly_500';
+export const PREMIUM_PRODUCT_ID = 'pocket_senpai_dh_monthly';
 
 export const PREMIUM_PLAN = {
   name: 'ポケット先輩プレミアム',
