@@ -23,6 +23,7 @@
 - Expo Router
 - React Native Paper
 - AsyncStorage
+- RevenueCat
 
 ## 主な機能
 
@@ -32,6 +33,7 @@
 - チェックリスト
 - ミニ学習クイズ
 - お気に入り
+- 月額500円プレミアムプラン
 
 ## 開発
 
@@ -75,6 +77,8 @@ FIREBASE_PROJECT_ID
 FIREBASE_STORAGE_BUCKET
 FIREBASE_MESSAGING_SENDER_ID
 FIREBASE_APP_ID
+REVENUECAT_IOS_API_KEY
+REVENUECAT_ANDROID_API_KEY
 ```
 
 検証だけを実行する場合は次を使います。
@@ -84,6 +88,20 @@ npm run validate:production-config
 ```
 
 EAS Build では、これらの値を EAS environment variables / secrets に登録してから production profile を実行してください。添付IPAと同じ本番アプリに合わせる場合は、IPAに含まれる広告IDやFirebase設定と同じ値を登録します。
+
+## RevenueCat / アプリ内課金
+
+月額500円プランは RevenueCat 経由で Apple / Google のストア課金を扱います。
+
+RevenueCat 側では次の設定名に合わせてください。
+
+```text
+Entitlement: premium
+Offering: default
+Product ID: pocket_senpai_monthly_500
+```
+
+アプリ側では `react-native-purchases` を使って、購入、復元、現在の購読状態確認を行います。Web版ではネイティブ課金が使えないため、課金画面には設定案内と開発用の表示切替だけが出ます。
 
 ## オンデバイスQwen3
 
