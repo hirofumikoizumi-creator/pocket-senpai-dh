@@ -9,8 +9,11 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { manuals } from '../../src/data/manuals';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 const categoryIcons: Record<string, { icon: string; color: string }> = {
   'TBI': { icon: 'toothbrush', color: '#4ECDC4' },
@@ -24,6 +27,8 @@ const categoryIcons: Record<string, { icon: string; color: string }> = {
 
 export default function ManualListScreen() {
   const router = useRouter();
+  const { isPremium } = useSubscription();
+  const visibleManuals = isPremium ? manuals : manuals.slice(0, FREE_PLAN_LIMITS.contentItems);
 
   const renderItem = ({ item }: { item: typeof manuals[0] }) => {
     const categoryInfo = categoryIcons[item.category] || { icon: 'book-open-variant', color: COLORS.primary };
@@ -57,7 +62,7 @@ export default function ManualListScreen() {
       />
       <View style={styles.container}>
         <FlatList
-          data={manuals}
+          data={visibleManuals}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
@@ -66,9 +71,16 @@ export default function ManualListScreen() {
             <>
               <Disclaimer />
               <Text style={styles.headerText}>
-                各業務の学習ポイントを確認できます
+                {isPremium
+                  ? `全${manuals.length}件のマニュアルを利用できます`
+                  : `無料プランでは${FREE_PLAN_LIMITS.contentItems}件まで閲覧できます`}
               </Text>
             </>
+          }
+          ListFooterComponent={
+            !isPremium && manuals.length > visibleManuals.length ? (
+              <PremiumPrompt title="マニュアルを全件解放" message="プレミアムでは症例別マニュアルをすべて閲覧できます。" />
+            ) : null
           }
         />
       </View>
