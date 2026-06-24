@@ -10,16 +10,34 @@ import { Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { checklistData } from '../../src/data/checklists';
 import { ChecklistCategory, ChecklistItem } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 const STORAGE_KEY = '@pocket_senpai_checklists';
 
+const limitChecklistCategories = (categories: ChecklistCategory[], limit: number) => {
+  let remaining = limit;
+  return categories
+    .map(category => {
+      const items = category.items.slice(0, Math.max(remaining, 0));
+      remaining -= items.length;
+      return { ...category, items };
+    })
+    .filter(category => category.items.length > 0);
+};
+
 export default function ChecklistScreen() {
+  const { isPremium } = useSubscription();
   const [categories, setCategories] = useState<ChecklistCategory[]>(checklistData);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const visibleCategories = isPremium ? categories : limitChecklistCategories(categories, FREE_PLAN_LIMITS.contentItems);
+  const totalItems = categories.reduce((count, category) => count + category.items.length, 0);
+  const visibleItems = visibleCategories.reduce((count, category) => count + category.items.length, 0);
 
   useEffect(() => {
     loadChecklistState();
@@ -120,7 +138,6 @@ export default function ChecklistScreen() {
             </View>
           </View>
           <View style={styles.categoryRight}>
-            {/* プログレスバー */}
             <View style={styles.progressBar}>
               <View style={[styles.progressFill, { width: `${progressPercent}%` }]} />
             </View>
@@ -132,7 +149,6 @@ export default function ChecklistScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* 展開時のアイテム一覧 */}
         {isExpanded && (
           <View style={styles.itemsContainer}>
             {item.items.map((checkItem) => (
@@ -165,7 +181,6 @@ export default function ChecklistScreen() {
                 />
               </View>
             ))}
-            {/* リセットボタン */}
             <TouchableOpacity
               style={styles.resetButton}
               onPress={() => resetCategory(item.id)}
@@ -189,7 +204,7 @@ export default function ChecklistScreen() {
       />
       <View style={styles.container}>
         <FlatList
-          data={categories}
+          data={visibleCategories}
           renderItem={renderCategory}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
@@ -198,9 +213,16 @@ export default function ChecklistScreen() {
             <>
               <Disclaimer />
               <Text style={styles.headerText}>
-                院内方針を確認しながら使う学習用チェックリストです
+                {isPremium
+                  ? `全${totalItems}項目のチェックリストを利用できます`
+                  : `無料プランでは${FREE_PLAN_LIMITS.contentItems}項目まで利用できます`}
               </Text>
             </>
+          }
+          ListFooterComponent={
+            !isPremium && totalItems > visibleItems ? (
+              <PremiumPrompt title="チェックリストを全件解放" message="プレミアムではすべてのチェック項目を利用できます。" />
+            ) : null
           }
         />
       </View>
