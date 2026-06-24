@@ -16,7 +16,7 @@ function readOptionalEnv(name, fallback) {
   return value && value.trim() ? value.trim() : fallback;
 }
 
-const admobIosAppId = readEnv('ADMOB_IOS_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
+const admobIosAppId = readEnv('ADMOB_IOS_APP_ID', 'ca-app-pub-5840457424714744~4483779292');
 const admobAndroidAppId = readEnv('ADMOB_ANDROID_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
 const admobBannerUnitId = readOptionalEnv('ADMOB_BANNER_UNIT_ID', 'ca-app-pub-5840457424714744/1680532309');
 const admobInterstitialUnitId = readOptionalEnv('ADMOB_INTERSTITIAL_UNIT_ID', 'ca-app-pub-5840457424714744/6338530833');
