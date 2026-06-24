@@ -9,8 +9,11 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { talkScripts } from '../../src/data/talks';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 const categoryIcons: Record<string, { icon: string; color: string }> = {
   '歯周病説明': { icon: 'tooth-outline', color: '#4ECDC4' },
@@ -23,6 +26,8 @@ const categoryIcons: Record<string, { icon: string; color: string }> = {
 
 export default function TalkListScreen() {
   const router = useRouter();
+  const { isPremium } = useSubscription();
+  const visibleTalks = isPremium ? talkScripts : talkScripts.slice(0, FREE_PLAN_LIMITS.contentItems);
 
   const renderItem = ({ item }: { item: typeof talkScripts[0] }) => {
     const categoryInfo = categoryIcons[item.category] || { icon: 'message-text-outline', color: COLORS.primary };
@@ -56,7 +61,7 @@ export default function TalkListScreen() {
       />
       <View style={styles.container}>
         <FlatList
-          data={talkScripts}
+          data={visibleTalks}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
@@ -65,9 +70,16 @@ export default function TalkListScreen() {
             <>
               <Disclaimer />
               <Text style={styles.headerText}>
-                患者さんへの説明で使える会話例を集めました
+                {isPremium
+                  ? `全${talkScripts.length}件の会話例を利用できます`
+                  : `無料プランでは${FREE_PLAN_LIMITS.contentItems}件まで閲覧できます`}
               </Text>
             </>
+          }
+          ListFooterComponent={
+            !isPremium && talkScripts.length > visibleTalks.length ? (
+              <PremiumPrompt title="トーク集を全件解放" message="プレミアムでは患者説明トーク集をすべて閲覧できます。" />
+            ) : null
           }
         />
       </View>
