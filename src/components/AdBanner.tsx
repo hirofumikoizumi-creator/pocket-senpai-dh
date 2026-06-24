@@ -1,21 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '../utils/theme';
+import { useSubscription } from '../hooks/useSubscription';
 
 /**
  * バナー広告コンポーネント
- * 
+ *
  * 本番環境では react-native-google-mobile-ads の BannerAd を使用。
- * 開発時はプレースホルダーを表示。
- * 
- * 本番実装時:
- * import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
- * 
- * const adUnitId = __DEV__
- *   ? TestIds.BANNER
- *   : Platform.OS === 'ios'
- *     ? 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY'
- *     : 'ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ';
+ * プレミアム会員は広告を非表示にします。
  */
 
 interface AdBannerProps {
@@ -24,21 +16,10 @@ interface AdBannerProps {
 }
 
 export function AdBanner({ size = 'banner', style }: AdBannerProps) {
+  const { isPremium } = useSubscription();
   const height = size === 'banner' ? 50 : size === 'largeBanner' ? 100 : 250;
 
-  // 開発時はプレースホルダーを表示
-  // 本番時は以下のコメントアウトを解除
-  /*
-  return (
-    <BannerAd
-      unitId={adUnitId}
-      size={BannerAdSize.BANNER}
-      requestOptions={{
-        requestNonPersonalizedAdsOnly: true,
-      }}
-    />
-  );
-  */
+  if (isPremium) return null;
 
   return (
     <View style={[styles.container, { height }, style]}>
@@ -51,6 +32,10 @@ export function AdBanner({ size = 'banner', style }: AdBannerProps) {
  * インライン広告コンポーネント（記事内に表示）
  */
 export function InlineAd({ style }: { style?: object }) {
+  const { isPremium } = useSubscription();
+
+  if (isPremium) return null;
+
   return (
     <View style={[styles.inlineContainer, style]}>
       <Text style={styles.inlineLabel}>PR</Text>
