@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { quizData, getQuizCategories, getQuizzesByCategory } from '../../src/data/quizzes';
 import { Quiz } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { useDailyLimit } from '../../src/hooks/useDailyLimit';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 type QuizState = 'category' | 'playing' | 'result';
 
 export default function QuizScreen() {
+  const router = useRouter();
+  const { isPremium } = useSubscription();
+  const quizLimit = useDailyLimit('@pocket_senpai_daily_quiz', FREE_PLAN_LIMITS.dailyQuizQuestions, isPremium);
   const [state, setState] = useState<QuizState>('category');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [currentQuizzes, setCurrentQuizzes] = useState<Quiz[]>([]);
@@ -27,10 +35,28 @@ export default function QuizScreen() {
 
   const categories = getQuizCategories();
 
+  const showLimitAlert = () => {
+    Alert.alert(
+      '本日の無料クイズ上限です',
+      `無料プランではミニ学習クイズは1日${FREE_PLAN_LIMITS.dailyQuizQuestions}問までです。プレミアムでは全問利用できます。`,
+      [
+        { text: 'あとで', style: 'cancel' },
+        { text: 'プレミアムを見る', onPress: () => router.push('/premium' as any) },
+      ]
+    );
+  };
+
   const startQuiz = (category: string) => {
+    if (!quizLimit.canUse) {
+      showLimitAlert();
+      return;
+    }
+
     const quizzes = getQuizzesByCategory(category);
+    const availableQuizzes = isPremium ? quizzes : quizzes.slice(0, Math.min(quizzes.length, quizLimit.remaining));
+
     setSelectedCategory(category);
-    setCurrentQuizzes(quizzes);
+    setCurrentQuizzes(availableQuizzes);
     setCurrentIndex(0);
     setScore(0);
     setSelectedAnswer(null);
@@ -38,8 +64,14 @@ export default function QuizScreen() {
     setState('playing');
   };
 
-  const handleAnswer = (index: number) => {
+  const handleAnswer = async (index: number) => {
     if (selectedAnswer !== null) return;
+    if (!quizLimit.canUse) {
+      showLimitAlert();
+      return;
+    }
+
+    await quizLimit.increment();
     setSelectedAnswer(index);
     setShowExplanation(true);
     if (index === currentQuizzes[currentIndex].correctIndex) {
@@ -76,14 +108,20 @@ export default function QuizScreen() {
     '患者対応': '#DDA0DD',
   };
 
-  // カテゴリ選択画面
   if (state === 'category') {
     return (
       <>
         <Stack.Screen options={{ title: 'ミニ学習クイズ', headerBackTitle: '戻る' }} />
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <Disclaimer />
-          <Text style={styles.headerText}>カテゴリを選んでクイズに挑戦しよう</Text>
+          <Text style={styles.headerText}>
+            {isPremium
+              ? `全${quizData.length}問からカテゴリを選んで挑戦できます`
+              : `無料プランでは1日${FREE_PLAN_LIMITS.dailyQuizQuestions}問まで挑戦できます。本日あと${quizLimit.remaining}問`}
+          </Text>
+          {!isPremium && !quizLimit.canUse && (
+            <PremiumPrompt title="本日の無料クイズは終了しました" message="プレミアムではミニ学習クイズを全問利用できます。" />
+          )}
           {categories.map((category) => {
             const count = getQuizzesByCategory(category).length;
             const color = categoryColors[category] || COLORS.primary;
@@ -110,7 +148,6 @@ export default function QuizScreen() {
     );
   }
 
-  // クイズ実施画面
   if (state === 'playing') {
     const quiz = currentQuizzes[currentIndex];
     return (
@@ -118,7 +155,6 @@ export default function QuizScreen() {
         <Stack.Screen options={{ title: selectedCategory, headerBackTitle: '戻る' }} />
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <Disclaimer />
-          {/* プログレス */}
           <View style={styles.progressContainer}>
             <Text style={styles.progressLabel}>
               {currentIndex + 1} / {currentQuizzes.length}
@@ -133,7 +169,6 @@ export default function QuizScreen() {
             </View>
           </View>
 
-          {/* 問題 */}
           <View style={styles.questionCard}>
             <Text style={styles.questionText}>{quiz.question}</Text>
             <View style={styles.favoriteRow}>
@@ -148,7 +183,6 @@ export default function QuizScreen() {
             </View>
           </View>
 
-          {/* 選択肢 */}
           {quiz.options.map((option, index) => {
             let optionStyle = styles.optionDefault;
             let textStyle = styles.optionTextDefault;
@@ -187,7 +221,6 @@ export default function QuizScreen() {
             );
           })}
 
-          {/* 解説 */}
           {showExplanation && (
             <View style={styles.explanationCard}>
               <View style={styles.explanationHeader}>
@@ -198,7 +231,6 @@ export default function QuizScreen() {
             </View>
           )}
 
-          {/* 次へボタン */}
           {selectedAnswer !== null && (
             <TouchableOpacity style={styles.nextButton} onPress={nextQuestion}>
               <Text style={styles.nextButtonText}>
@@ -212,7 +244,6 @@ export default function QuizScreen() {
     );
   }
 
-  // 結果画面
   return (
     <>
       <Stack.Screen options={{ title: '結果', headerBackTitle: '戻る' }} />
@@ -237,12 +268,13 @@ export default function QuizScreen() {
           </Text>
         </View>
 
-        {/* リワード広告スペース */}
-        <View style={styles.rewardAdSpace}>
-          <MaterialCommunityIcons name="play-circle-outline" size={24} color={COLORS.primary} />
-          <Text style={styles.rewardAdText}>動画を見て追加解説を見る</Text>
-          <Text style={styles.rewardAdSubtext}>（広告スペース）</Text>
-        </View>
+        {!isPremium && (
+          <View style={styles.rewardAdSpace}>
+            <MaterialCommunityIcons name="play-circle-outline" size={24} color={COLORS.primary} />
+            <Text style={styles.rewardAdText}>動画を見て追加解説を見る</Text>
+            <Text style={styles.rewardAdSubtext}>（広告スペース）</Text>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.retryButton} onPress={() => startQuiz(selectedCategory)}>
           <MaterialCommunityIcons name="refresh" size={18} color={COLORS.primary} />
