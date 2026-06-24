@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   View,
   Text,
   StyleSheet,
@@ -10,13 +11,17 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { getAIResponse } from '../../src/services/aiService';
 import { ConsultationResponse } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { useDailyLimit } from '../../src/hooks/useDailyLimit';
+import { useSubscription } from '../../src/hooks/useSubscription';
 import { getOnDeviceQwenStatus, OnDeviceQwenStatus } from '../../src/services/onDeviceQwen';
 
 interface Message {
@@ -37,6 +42,9 @@ const suggestedQuestions = [
 ];
 
 export default function ConsultationScreen() {
+  const router = useRouter();
+  const { isPremium } = useSubscription();
+  const chatLimit = useDailyLimit('@pocket_senpai_daily_chat', FREE_PLAN_LIMITS.dailyChatMessages, isPremium);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -53,9 +61,27 @@ export default function ConsultationScreen() {
     };
   }, []);
 
+  const showLimitAlert = () => {
+    Alert.alert(
+      '本日の無料チャット上限です',
+      `無料プランでは先輩相談AIチャットは1日${FREE_PLAN_LIMITS.dailyChatMessages}回までです。プレミアムでは無制限に相談できます。`,
+      [
+        { text: 'あとで', style: 'cancel' },
+        { text: 'プレミアムを見る', onPress: () => router.push('/premium' as any) },
+      ]
+    );
+  };
+
   const handleSend = async (text?: string) => {
     const query = text || inputText.trim();
     if (!query || isLoading) return;
+
+    if (!chatLimit.canUse) {
+      showLimitAlert();
+      return;
+    }
+
+    await chatLimit.increment();
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -119,7 +145,6 @@ export default function ConsultationScreen() {
           />
         </View>
 
-        {/* 結論 */}
         <View style={styles.responseSection}>
           <View style={styles.responseLabelRow}>
             <MaterialCommunityIcons name="lightbulb-outline" size={16} color={COLORS.primary} />
@@ -128,7 +153,6 @@ export default function ConsultationScreen() {
           <Text style={styles.responseText}>{response.conclusion}</Text>
         </View>
 
-        {/* 現場での対応 */}
         {response.fieldAction && (
           <View style={styles.responseSection}>
             <View style={styles.responseLabelRow}>
@@ -139,7 +163,6 @@ export default function ConsultationScreen() {
           </View>
         )}
 
-        {/* 患者さんへの言い方 */}
         {response.patientTalk && (
           <View style={styles.responseSection}>
             <View style={styles.responseLabelRow}>
@@ -152,7 +175,6 @@ export default function ConsultationScreen() {
           </View>
         )}
 
-        {/* 注意点 */}
         {response.caution && (
           <View style={styles.responseSection}>
             <View style={styles.responseLabelRow}>
@@ -163,7 +185,6 @@ export default function ConsultationScreen() {
           </View>
         )}
 
-        {/* 先輩から一言 */}
         {response.senpaiMessage && (
           <View style={[styles.responseSection, styles.senpaiSection]}>
             <View style={styles.responseLabelRow}>
@@ -211,7 +232,14 @@ export default function ConsultationScreen() {
                 : 'Qwen3未読込のため、監修済みテンプレートで安全に応答します'}
             </Text>
           </View>
-          {/* 初期表示 */}
+          {!isPremium && (
+            <Text style={styles.limitText}>
+              無料チャット: 本日あと{chatLimit.remaining}回 / {FREE_PLAN_LIMITS.dailyChatMessages}回
+            </Text>
+          )}
+          {messages.length === 0 && !chatLimit.canUse && !isPremium && (
+            <PremiumPrompt title="本日の無料相談は終了しました" message="プレミアムでは先輩相談AIチャットを無制限に利用できます。" />
+          )}
           {messages.length === 0 && (
             <View style={styles.welcomeContainer}>
               <View style={styles.welcomeIconContainer}>
@@ -222,7 +250,6 @@ export default function ConsultationScreen() {
                 仕事の悩みや分からないことを{'\n'}気軽に聞いてみてね
               </Text>
 
-              {/* 提案質問 */}
               <View style={styles.suggestionsContainer}>
                 <Text style={styles.suggestionsTitle}>こんなことを聞いてみよう</Text>
                 {suggestedQuestions.map((question, index) => (
@@ -239,7 +266,6 @@ export default function ConsultationScreen() {
             </View>
           )}
 
-          {/* メッセージ一覧 */}
           {messages.map((message) => (
             <View key={message.id} style={styles.messageWrapper}>
               {message.type === 'user' ? (
@@ -261,7 +287,6 @@ export default function ConsultationScreen() {
             </View>
           ))}
 
-          {/* ローディング */}
           {isLoading && (
             <View style={styles.loadingContainer}>
               <View style={styles.aiAvatar}>
@@ -275,7 +300,6 @@ export default function ConsultationScreen() {
           )}
         </ScrollView>
 
-        {/* 入力エリア */}
         <View style={styles.inputContainer}>
           <View style={styles.inputWrapper}>
             <TextInput
@@ -288,14 +312,14 @@ export default function ConsultationScreen() {
               maxLength={200}
             />
             <TouchableOpacity
-              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
+              style={[styles.sendButton, (!inputText.trim() || (!chatLimit.canUse && !isPremium)) && styles.sendButtonDisabled]}
               onPress={() => handleSend()}
               disabled={!inputText.trim() || isLoading}
             >
               <MaterialCommunityIcons
                 name="send"
                 size={20}
-                color={inputText.trim() ? COLORS.white : COLORS.textLight}
+                color={inputText.trim() && (chatLimit.canUse || isPremium) ? COLORS.white : COLORS.textLight}
               />
             </TouchableOpacity>
           </View>
@@ -326,13 +350,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     padding: SPACING.sm,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   localModelText: {
     flex: 1,
     color: COLORS.textSecondary,
     fontSize: FONT_SIZES.xs,
     lineHeight: 16,
+  },
+  limitText: {
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.xs,
+    fontWeight: '600',
+    marginBottom: SPACING.md,
+    paddingHorizontal: SPACING.xs,
   },
   welcomeContainer: {
     alignItems: 'center',
