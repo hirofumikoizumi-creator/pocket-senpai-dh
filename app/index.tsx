@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../src/utils/theme';
 import { Disclaimer } from '../src/components/Disclaimer';
+import { AdBanner } from '../src/components/AdBanner';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - SPACING.lg * 3) / 2;
@@ -22,6 +23,7 @@ const menuCards = [
   { id: '3', title: 'チェックリスト', subtitle: '準備を確認', icon: 'clipboard-check-outline', route: '/checklist', color: '#96CEB4' },
   { id: '4', title: 'ミニ学習クイズ', subtitle: '知識をチェック', icon: 'lightbulb-outline', route: '/quiz', color: '#FFEAA7' },
   { id: '5', title: 'お気に入り', subtitle: '保存した内容', icon: 'heart-outline', route: '/favorites', color: '#DDA0DD' },
+  { id: '6', title: 'プレミアム', subtitle: '月額500円', icon: 'crown-outline', route: '/premium', color: '#4ECDC4' },
 ];
 
 function SenpaiCharacter() {
@@ -105,9 +107,7 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        <View style={styles.adBanner}>
-          <Text style={styles.adText}>Ad Banner (banner)</Text>
-        </View>
+        <AdBanner size="banner" style={styles.adBanner} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -174,6 +174,5 @@ const styles = StyleSheet.create({
   cardIconContainer: { width: 58, height: 58, borderRadius: BORDER_RADIUS.lg, justifyContent: 'center', alignItems: 'center', marginBottom: SPACING.lg },
   cardTitle: { fontSize: 20, lineHeight: 26, fontWeight: '800', color: COLORS.text, marginBottom: SPACING.sm },
   cardSubtitle: { fontSize: FONT_SIZES.sm, fontWeight: '600', color: COLORS.textSecondary },
-  adBanner: { height: 76, backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md, justifyContent: 'center', alignItems: 'center', marginTop: SPACING.md, borderWidth: 1, borderColor: '#CDEFE9', borderStyle: 'dashed' },
-  adText: { fontSize: FONT_SIZES.sm, fontWeight: '600', color: COLORS.textLight },
+  adBanner: { marginTop: SPACING.md },
 });
