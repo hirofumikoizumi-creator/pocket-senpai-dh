@@ -1,9 +1,10 @@
 import React from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BORDER_RADIUS, COLORS, FONT_SIZES, SHADOWS, SPACING } from '../../src/utils/theme';
 import { FREE_PLAN_LIMITS, PREMIUM_PLAN } from '../../src/constants/plans';
+import { REVENUECAT_ENTITLEMENT_ID, REVENUECAT_OFFERING_ID } from '../../src/services/revenueCat';
 import { useSubscription } from '../../src/hooks/useSubscription';
 
 const premiumBenefits = [
@@ -24,18 +25,46 @@ const freeLimits = [
   '広告あり',
 ];
 
-export default function PremiumScreen() {
-  const { isPremium, subscriptionSource, setDevelopmentPremium } = useSubscription();
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return '不明なエラーが発生しました。';
+}
 
-  const handlePurchase = () => {
-    Alert.alert(
-      '課金連携準備中',
-      `App Store Connect / RevenueCat で ${PREMIUM_PLAN.productId} を接続すると、このボタンから月額500円プランを購入できるようになります。`
-    );
+export default function PremiumScreen() {
+  const {
+    isPremium,
+    subscriptionSource,
+    isRevenueCatConfigured,
+    isLoading,
+    buyPremium,
+    restoreSubscription,
+    setDevelopmentPremium,
+  } = useSubscription();
+
+  const handlePurchase = async () => {
+    try {
+      const result = await buyPremium();
+      if (result.isPremium) {
+        Alert.alert('購入が完了しました', 'ポケット先輩プレミアムが有効になりました。');
+      } else {
+        Alert.alert('購入を確認できませんでした', `RevenueCatのEntitlement「${REVENUECAT_ENTITLEMENT_ID}」が有効になっているか確認してください。`);
+      }
+    } catch (error) {
+      Alert.alert('購入できませんでした', getErrorMessage(error));
+    }
   };
 
-  const handleRestore = () => {
-    Alert.alert('復元準備中', '購入復元は課金SDK接続後に有効になります。');
+  const handleRestore = async () => {
+    try {
+      const result = await restoreSubscription();
+      if (result.isPremium) {
+        Alert.alert('購入を復元しました', 'ポケット先輩プレミアムが有効になりました。');
+      } else {
+        Alert.alert('復元できる購入がありません', '同じApple IDで購入済みか確認してください。');
+      }
+    } catch (error) {
+      Alert.alert('復元できませんでした', getErrorMessage(error));
+    }
   };
 
   const handleDevelopmentToggle = () => {
@@ -65,7 +94,22 @@ export default function PremiumScreen() {
           <Text style={styles.description}>
             仕事中の確認と学習を、制限なく使えるプランです。
           </Text>
+          {isPremium && (
+            <View style={styles.activeBadge}>
+              <MaterialCommunityIcons name="check-circle" size={16} color={COLORS.primaryDark} />
+              <Text style={styles.activeBadgeText}>プレミアム有効</Text>
+            </View>
+          )}
         </View>
+
+        {!isRevenueCatConfigured && (
+          <View style={styles.setupNotice}>
+            <MaterialCommunityIcons name="information-outline" size={18} color={COLORS.warning} />
+            <Text style={styles.setupNoticeText}>
+              RevenueCat APIキー未設定です。EAS環境変数 REVENUECAT_IOS_API_KEY / REVENUECAT_ANDROID_API_KEY を設定し、Offering「{REVENUECAT_OFFERING_ID}」とEntitlement「{REVENUECAT_ENTITLEMENT_ID}」を作成してください。
+            </Text>
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>無料プラン</Text>
@@ -87,10 +131,10 @@ export default function PremiumScreen() {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.purchaseButton} onPress={handlePurchase} activeOpacity={0.75}>
-          <Text style={styles.purchaseText}>{PREMIUM_PLAN.priceLabel}で始める</Text>
+        <TouchableOpacity style={[styles.purchaseButton, isLoading && styles.disabledButton]} onPress={handlePurchase} activeOpacity={0.75} disabled={isLoading}>
+          {isLoading ? <ActivityIndicator color={COLORS.white} /> : <Text style={styles.purchaseText}>{PREMIUM_PLAN.priceLabel}で始める</Text>}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.restoreButton} onPress={handleRestore} activeOpacity={0.75}>
+        <TouchableOpacity style={styles.restoreButton} onPress={handleRestore} activeOpacity={0.75} disabled={isLoading}>
           <Text style={styles.restoreText}>購入を復元</Text>
         </TouchableOpacity>
 
@@ -149,6 +193,35 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: SPACING.sm,
   },
+  activeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.full,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    marginTop: SPACING.md,
+  },
+  activeBadgeText: {
+    color: COLORS.primaryDark,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    marginLeft: SPACING.xs,
+  },
+  setupNotice: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF8F0',
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+  },
+  setupNoticeText: {
+    flex: 1,
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.sm,
+    lineHeight: 20,
+    marginLeft: SPACING.sm,
+  },
   section: {
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.md,
@@ -190,6 +263,9 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     alignItems: 'center',
     marginTop: SPACING.sm,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   purchaseText: {
     color: COLORS.white,
