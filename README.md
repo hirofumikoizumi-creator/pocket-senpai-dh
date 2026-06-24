@@ -122,7 +122,7 @@ RevenueCat 側では次の設定名に合わせてください。
 ```text
 Entitlement: premium
 Offering: default
-Product ID: pocket_senpai_monthly_500
+Product ID: pocket_senpai_dh_monthly
 ```
 
 アプリ側では `react-native-purchases` を使って、購入、復元、現在の購読状態確認を行います。Web版ではネイティブ課金が使えないため、課金画面には設定案内と開発用の表示切替だけが出ます。
