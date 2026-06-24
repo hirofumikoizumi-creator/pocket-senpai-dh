@@ -94,15 +94,16 @@ EAS Build では、これらの値を EAS environment variables / secrets に登
 
 無料プランでは広告を表示し、プレミアムでは広告を非表示にします。
 
-現在の広告ユニットIDは次の値を使用します。
+現在のiOS AdMobアプリIDと広告ユニットIDは次の値を使用します。
 
 ```text
+iOS App ID: ca-app-pub-5840457424714744~4483779292
 banner_main: ca-app-pub-5840457424714744/1680532309
 interstitial_main: ca-app-pub-5840457424714744/6338530833
 reward_main: ca-app-pub-5840457424714744/6918370940
 ```
 
-`ADMOB_IOS_APP_ID` / `ADMOB_ANDROID_APP_ID` には、広告ユニットIDではなく AdMob のアプリIDを設定してください。形式は `ca-app-pub-...~...` です。
+`ADMOB_IOS_APP_ID` / `ADMOB_ANDROID_APP_ID` には、広告ユニットIDではなく AdMob のアプリIDを設定してください。形式は `ca-app-pub-...~...` です。Android版を出す場合は、Android用のAdMobアプリIDを別途作成して `ADMOB_ANDROID_APP_ID` に設定します。
 
 必要に応じて広告ユニットIDも EAS environment variables で上書きできます。
 
