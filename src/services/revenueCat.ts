@@ -111,7 +111,7 @@ export async function purchasePremium() {
   const monthlyPackage = getMonthlyPackage(offerings);
 
   if (!monthlyPackage) {
-    throw new Error(`RevenueCat offering is missing. Create offering "${REVENUECAT_OFFERING_ID}" with a monthly package for product pocket_senpai_monthly_500.`);
+    throw new Error(`RevenueCat offering is missing. Create offering "${REVENUECAT_OFFERING_ID}" with a monthly package for product pocket_senpai_dh_monthly.`);
   }
 
   const result = await Purchases.purchasePackage(monthlyPackage);
