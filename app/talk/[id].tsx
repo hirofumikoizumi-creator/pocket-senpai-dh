@@ -8,13 +8,20 @@ import {
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
+import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { talkScripts } from '../../src/data/talks';
 import { Disclaimer } from '../../src/components/Disclaimer';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
+import { PremiumPrompt } from '../../src/components/PremiumPrompt';
+import { AdBanner } from '../../src/components/AdBanner';
+import { useSubscription } from '../../src/hooks/useSubscription';
 
 export default function TalkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const talk = talkScripts.find(t => t.id === id);
+  const { isPremium } = useSubscription();
+  const talkIndex = talkScripts.findIndex(t => t.id === id);
+  const talk = talkScripts[talkIndex];
+  const isLocked = !isPremium && talkIndex >= FREE_PLAN_LIMITS.contentItems;
 
   if (!talk) {
     return (
@@ -34,65 +41,64 @@ export default function TalkDetailScreen() {
       />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <Disclaimer />
-        {/* ヘッダー */}
-        <View style={styles.header}>
-          <Text style={styles.title}>{talk.title}</Text>
-          <View style={styles.situationBox}>
-            <MaterialCommunityIcons name="information-outline" size={14} color={COLORS.primary} />
-            <Text style={styles.situationText}>{talk.situation}</Text>
-          </View>
-          <View style={styles.favoriteRow}>
-            <FavoriteButton
-              item={{
-                id: talk.id,
-                type: 'talk',
-                title: talk.title,
-                category: talk.category,
-              }}
-            />
-          </View>
-        </View>
-
-        {/* 会話 */}
-        <View style={styles.dialogueContainer}>
-          {talk.dialogues.map((dialogue, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dialogueRow,
-                dialogue.speaker === 'dh' ? styles.dhRow : styles.patientRow,
-              ]}
-            >
-              {/* アバター */}
-              <View style={[
-                styles.avatar,
-                dialogue.speaker === 'dh' ? styles.dhAvatar : styles.patientAvatar,
-              ]}>
-                <MaterialCommunityIcons
-                  name={dialogue.speaker === 'dh' ? 'account-heart' : 'account'}
-                  size={16}
-                  color={dialogue.speaker === 'dh' ? COLORS.primary : '#FF6B9D'}
+        {isLocked ? (
+          <PremiumPrompt title="トーク集を全件解放" message="無料プランでは10件まで閲覧できます。プレミアムでは患者説明トーク集をすべて利用できます。" />
+        ) : (
+          <>
+            <View style={styles.header}>
+              <Text style={styles.title}>{talk.title}</Text>
+              <View style={styles.situationBox}>
+                <MaterialCommunityIcons name="information-outline" size={14} color={COLORS.primary} />
+                <Text style={styles.situationText}>{talk.situation}</Text>
+              </View>
+              <View style={styles.favoriteRow}>
+                <FavoriteButton
+                  item={{
+                    id: talk.id,
+                    type: 'talk',
+                    title: talk.title,
+                    category: talk.category,
+                  }}
                 />
               </View>
-
-              {/* 吹き出し */}
-              <View style={[
-                styles.bubble,
-                dialogue.speaker === 'dh' ? styles.dhBubble : styles.patientBubble,
-              ]}>
-                <Text style={styles.speakerLabel}>
-                  {dialogue.speaker === 'dh' ? '歯科衛生士' : '患者さん'}
-                </Text>
-                <Text style={styles.dialogueText}>{dialogue.text}</Text>
-              </View>
             </View>
-          ))}
-        </View>
 
-        {/* 広告スペース */}
-        <View style={styles.adSpace}>
-          <Text style={styles.adText}>広告スペース</Text>
-        </View>
+            <View style={styles.dialogueContainer}>
+              {talk.dialogues.map((dialogue, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dialogueRow,
+                    dialogue.speaker === 'dh' ? styles.dhRow : styles.patientRow,
+                  ]}
+                >
+                  <View style={[
+                    styles.avatar,
+                    dialogue.speaker === 'dh' ? styles.dhAvatar : styles.patientAvatar,
+                  ]}>
+                    <MaterialCommunityIcons
+                      name={dialogue.speaker === 'dh' ? 'account-heart' : 'account'}
+                      size={16}
+                      color={dialogue.speaker === 'dh' ? COLORS.primary : '#FF6B9D'}
+                    />
+                  </View>
+
+                  <View style={[
+                    styles.bubble,
+                    dialogue.speaker === 'dh' ? styles.dhBubble : styles.patientBubble,
+                  ]}>
+                    <Text style={styles.speakerLabel}>
+                      {dialogue.speaker === 'dh' ? '歯科衛生士' : '患者さん'}
+                    </Text>
+                    <Text style={styles.dialogueText}>{dialogue.text}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <AdBanner size="banner" style={styles.adSpace} />
+          </>
+        )}
 
         <Disclaimer compact />
       </ScrollView>
@@ -189,18 +195,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   adSpace: {
-    height: 50,
-    backgroundColor: COLORS.surfaceLight,
-    borderRadius: BORDER_RADIUS.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginVertical: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderStyle: 'dashed',
-  },
-  adText: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
   },
 });
