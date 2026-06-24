@@ -11,8 +11,16 @@ function readEnv(name, fallback) {
   return fallback;
 }
 
+function readOptionalEnv(name, fallback) {
+  const value = process.env[name];
+  return value && value.trim() ? value.trim() : fallback;
+}
+
 const admobIosAppId = readEnv('ADMOB_IOS_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
 const admobAndroidAppId = readEnv('ADMOB_ANDROID_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
+const admobBannerUnitId = readOptionalEnv('ADMOB_BANNER_UNIT_ID', 'ca-app-pub-5840457424714744/1680532309');
+const admobInterstitialUnitId = readOptionalEnv('ADMOB_INTERSTITIAL_UNIT_ID', 'ca-app-pub-5840457424714744/6338530833');
+const admobRewardedUnitId = readOptionalEnv('ADMOB_REWARDED_UNIT_ID', 'ca-app-pub-5840457424714744/6918370940');
 const revenueCatIosApiKey = readEnv('REVENUECAT_IOS_API_KEY', 'appl_REVENUECAT_IOS_API_KEY');
 const revenueCatAndroidApiKey = readEnv('REVENUECAT_ANDROID_API_KEY', 'goog_REVENUECAT_ANDROID_API_KEY');
 
@@ -86,6 +94,9 @@ module.exports = {
       eas: {
         projectId: 'e599585a-ba45-4972-a502-a4bec2cee1e4',
       },
+      admobBannerUnitId,
+      admobInterstitialUnitId,
+      admobRewardedUnitId,
       revenueCatIosApiKey,
       revenueCatAndroidApiKey,
       revenueCatEntitlementId: 'premium',
