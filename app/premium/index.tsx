@@ -10,19 +10,16 @@ import { useSubscription } from '../../src/hooks/useSubscription';
 const premiumBenefits = [
   '先輩相談AIチャット無制限',
   '患者説明トーク集を全件閲覧',
-  '症例別マニュアルを全件閲覧',
-  'チェックリストを全件利用',
+  '症例別マニュアル・チェックリストを全件利用',
   'ミニ学習クイズを全問利用',
-  'お気に入り登録無制限',
-  '広告なし',
+  'お気に入り登録無制限、広告なし',
 ];
 
 const freeLimits = [
   `チャット1日${FREE_PLAN_LIMITS.dailyChatMessages}回`,
   `各コンテンツ${FREE_PLAN_LIMITS.contentItems}件まで`,
   `クイズ1日${FREE_PLAN_LIMITS.dailyQuizQuestions}問`,
-  `お気に入り${FREE_PLAN_LIMITS.favorites}件まで`,
-  '広告あり',
+  `お気に入り${FREE_PLAN_LIMITS.favorites}件まで、広告あり`,
 ];
 
 function getErrorMessage(error: unknown) {
@@ -85,9 +82,10 @@ export default function PremiumScreen() {
     <>
       <Stack.Screen options={{ title: 'プレミアム', headerBackTitle: '戻る' }} />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={styles.heroBackdrop} />
         <View style={styles.hero}>
           <View style={styles.crownCircle}>
-            <MaterialCommunityIcons name="crown-outline" size={36} color={COLORS.primaryDark} />
+            <MaterialCommunityIcons name="crown-outline" size={38} color={COLORS.primaryDark} />
           </View>
           <Text style={styles.title}>{PREMIUM_PLAN.name}</Text>
           <Text style={styles.price}>{PREMIUM_PLAN.priceLabel}</Text>
@@ -111,22 +109,22 @@ export default function PremiumScreen() {
           </View>
         )}
 
+        <View style={[styles.section, styles.premiumSection]}>
+          <Text style={styles.sectionTitle}>有料プランでできること</Text>
+          {premiumBenefits.map((item) => (
+            <View key={item} style={styles.row}>
+              <MaterialCommunityIcons name="check-circle" size={19} color={COLORS.primary} />
+              <Text style={styles.benefitText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>無料プラン</Text>
           {freeLimits.map((item) => (
             <View key={item} style={styles.row}>
               <MaterialCommunityIcons name="check-circle-outline" size={18} color={COLORS.textLight} />
               <Text style={styles.freeText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={[styles.section, styles.premiumSection]}>
-          <Text style={styles.sectionTitle}>有料プランでできること</Text>
-          {premiumBenefits.map((item) => (
-            <View key={item} style={styles.row}>
-              <MaterialCommunityIcons name="check-circle" size={18} color={COLORS.primary} />
-              <Text style={styles.benefitText}>{item}</Text>
             </View>
           ))}
         </View>
@@ -156,6 +154,15 @@ const styles = StyleSheet.create({
   content: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
+  },
+  heroBackdrop: {
+    position: 'absolute',
+    top: 8,
+    right: -58,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: COLORS.surfaceLight,
   },
   hero: {
     alignItems: 'center',
@@ -192,6 +199,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
     marginTop: SPACING.sm,
+    fontWeight: '700',
   },
   activeBadge: {
     flexDirection: 'row',
@@ -225,7 +233,7 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.md,
-    padding: SPACING.md,
+    padding: SPACING.lg,
     marginBottom: SPACING.md,
     ...SHADOWS.sm,
   },
@@ -235,27 +243,30 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FONT_SIZES.lg,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.text,
     marginBottom: SPACING.sm,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: SPACING.xs,
+    paddingVertical: SPACING.sm,
   },
   freeText: {
     flex: 1,
     marginLeft: SPACING.sm,
     fontSize: FONT_SIZES.md,
     color: COLORS.textSecondary,
+    fontWeight: '600',
+    lineHeight: 22,
   },
   benefitText: {
     flex: 1,
     marginLeft: SPACING.sm,
     fontSize: FONT_SIZES.md,
     color: COLORS.text,
-    fontWeight: '600',
+    fontWeight: '700',
+    lineHeight: 22,
   },
   purchaseButton: {
     backgroundColor: COLORS.primary,
@@ -263,6 +274,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     alignItems: 'center',
     marginTop: SPACING.sm,
+    ...SHADOWS.sm,
   },
   disabledButton: {
     opacity: 0.7,
