@@ -13,6 +13,8 @@ function readEnv(name, fallback) {
 
 const admobIosAppId = readEnv('ADMOB_IOS_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
 const admobAndroidAppId = readEnv('ADMOB_ANDROID_APP_ID', 'ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY');
+const revenueCatIosApiKey = readEnv('REVENUECAT_IOS_API_KEY', 'appl_REVENUECAT_IOS_API_KEY');
+const revenueCatAndroidApiKey = readEnv('REVENUECAT_ANDROID_API_KEY', 'goog_REVENUECAT_ANDROID_API_KEY');
 
 module.exports = {
   expo: {
@@ -84,6 +86,10 @@ module.exports = {
       eas: {
         projectId: 'e599585a-ba45-4972-a502-a4bec2cee1e4',
       },
+      revenueCatIosApiKey,
+      revenueCatAndroidApiKey,
+      revenueCatEntitlementId: 'premium',
+      revenueCatOfferingId: 'default',
       firebaseApiKey: readEnv('FIREBASE_API_KEY', 'YOUR_FIREBASE_API_KEY'),
       firebaseAuthDomain: readEnv('FIREBASE_AUTH_DOMAIN', 'YOUR_PROJECT.firebaseapp.com'),
       firebaseProjectId: readEnv('FIREBASE_PROJECT_ID', 'YOUR_PROJECT_ID'),
