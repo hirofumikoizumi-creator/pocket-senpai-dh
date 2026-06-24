@@ -1,7 +1,10 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
-const extra = Constants.expoConfig?.extra || Constants.manifest2?.extra || {};
+declare const require: any;
+
+const constants = Constants as any;
+const extra = Constants.expoConfig?.extra || constants.manifest2?.extra || {};
 
 export const REVENUECAT_ENTITLEMENT_ID = String(extra.revenueCatEntitlementId || 'premium');
 export const REVENUECAT_OFFERING_ID = String(extra.revenueCatOfferingId || 'default');
