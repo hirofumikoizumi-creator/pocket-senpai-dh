@@ -1,29 +1,77 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Platform, View, Text, StyleSheet } from 'react-native';
+import Constants from 'expo-constants';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '../utils/theme';
 import { useSubscription } from '../hooks/useSubscription';
 
-/**
- * バナー広告コンポーネント
- *
- * 本番環境では react-native-google-mobile-ads の BannerAd を使用。
- * プレミアム会員は広告を非表示にします。
- */
+declare const require: any;
 
 interface AdBannerProps {
   size?: 'banner' | 'largeBanner' | 'mediumRectangle';
   style?: object;
 }
 
+const constants = Constants as any;
+const extra = Constants.expoConfig?.extra || constants.manifest2?.extra || {};
+const bannerUnitId = String(extra.admobBannerUnitId || 'ca-app-pub-5840457424714744/1680532309');
+
+function getGoogleMobileAds() {
+  if (Platform.OS === 'web') return null;
+
+  try {
+    const module = require('react-native-google-mobile-ads');
+    return module.default ? { ...module, default: module.default } : module;
+  } catch (error) {
+    console.warn('Google Mobile Ads SDK is unavailable:', error);
+    return null;
+  }
+}
+
+function getBannerSize(size: AdBannerProps['size'], BannerAdSize: any) {
+  if (size === 'largeBanner') return BannerAdSize?.LARGE_BANNER || 'LARGE_BANNER';
+  if (size === 'mediumRectangle') return BannerAdSize?.MEDIUM_RECTANGLE || 'MEDIUM_RECTANGLE';
+  return BannerAdSize?.BANNER || 'BANNER';
+}
+
+function getPlaceholderHeight(size: AdBannerProps['size']) {
+  if (size === 'largeBanner') return 100;
+  if (size === 'mediumRectangle') return 250;
+  return 50;
+}
+
+/**
+ * バナー広告コンポーネント
+ *
+ * ネイティブ環境では react-native-google-mobile-ads の BannerAd を使用。
+ * Web/開発環境でSDKが使えない場合はプレースホルダーを表示します。
+ * プレミアム会員は広告を非表示にします。
+ */
 export function AdBanner({ size = 'banner', style }: AdBannerProps) {
   const { isPremium } = useSubscription();
-  const height = size === 'banner' ? 50 : size === 'largeBanner' ? 100 : 250;
+  const ads = getGoogleMobileAds();
 
   if (isPremium) return null;
 
+  const height = getPlaceholderHeight(size);
+
+  if (!ads?.BannerAd) {
+    return (
+      <View style={[styles.container, { height }, style]}>
+        <Text style={styles.text}>Ad Banner ({size})</Text>
+      </View>
+    );
+  }
+
+  const BannerAd = ads.BannerAd;
+  const adSize = getBannerSize(size, ads.BannerAdSize);
+
   return (
-    <View style={[styles.container, { height }, style]}>
-      <Text style={styles.text}>Ad Banner ({size})</Text>
+    <View style={[styles.nativeContainer, style]}>
+      <BannerAd
+        unitId={bannerUnitId}
+        size={adSize}
+        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+      />
     </View>
   );
 }
@@ -32,19 +80,15 @@ export function AdBanner({ size = 'banner', style }: AdBannerProps) {
  * インライン広告コンポーネント（記事内に表示）
  */
 export function InlineAd({ style }: { style?: object }) {
-  const { isPremium } = useSubscription();
-
-  if (isPremium) return null;
-
-  return (
-    <View style={[styles.inlineContainer, style]}>
-      <Text style={styles.inlineLabel}>PR</Text>
-      <Text style={styles.text}>インライン広告スペース</Text>
-    </View>
-  );
+  return <AdBanner size="mediumRectangle" style={style || styles.inlineContainer} />;
 }
 
 const styles = StyleSheet.create({
+  nativeContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: SPACING.sm,
+  },
   container: {
     backgroundColor: COLORS.surfaceLight,
     borderRadius: BORDER_RADIUS.sm,
@@ -67,15 +111,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     borderStyle: 'dashed',
-  },
-  inlineLabel: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textLight,
-    backgroundColor: COLORS.border,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginBottom: SPACING.xs,
-    overflow: 'hidden',
   },
 });
