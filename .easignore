@@ -1,0 +1,9 @@
+node_modules/
+.git/
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+npm-debug.*
+yarn-error.*
+node_modules_partial/

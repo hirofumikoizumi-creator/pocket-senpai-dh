@@ -68,8 +68,7 @@ module.exports = {
       [
         'llama.rn',
         {
-          enableEntitlements: true,
-          entitlementsProfile: 'production',
+          enableEntitlements: false,
           forceCxx20: true,
           enableOpenCLAndHexagon: false,
         },
@@ -110,3 +109,4 @@ module.exports = {
     },
   },
 };
+

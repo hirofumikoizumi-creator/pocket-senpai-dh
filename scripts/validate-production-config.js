@@ -1,6 +1,5 @@
 const REQUIRED_ENV_VARS = [
   'ADMOB_IOS_APP_ID',
-  'ADMOB_ANDROID_APP_ID',
   'FIREBASE_API_KEY',
   'FIREBASE_AUTH_DOMAIN',
   'FIREBASE_PROJECT_ID',
@@ -8,7 +7,6 @@ const REQUIRED_ENV_VARS = [
   'FIREBASE_MESSAGING_SENDER_ID',
   'FIREBASE_APP_ID',
   'REVENUECAT_IOS_API_KEY',
-  'REVENUECAT_ANDROID_API_KEY',
 ];
 
 const PLACEHOLDER_PATTERNS = [
@@ -47,3 +45,4 @@ if (missing.length || placeholders.length) {
 }
 
 console.log('Production configuration looks complete.');
+
