@@ -23,6 +23,8 @@ import { PremiumPrompt } from '../../src/components/PremiumPrompt';
 import { useDailyLimit } from '../../src/hooks/useDailyLimit';
 import { useSubscription } from '../../src/hooks/useSubscription';
 import { getOnDeviceQwenStatus, OnDeviceQwenStatus } from '../../src/services/onDeviceQwen';
+import { SenpaiCharacter } from '../../src/components/SenpaiCharacter';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Message {
   id: string;
@@ -41,37 +43,9 @@ const suggestedQuestions = [
   'TBIのコツを知りたい',
 ];
 
-function SenpaiIllustration({ compact = false }: { compact?: boolean }) {
-  if (compact) {
-    return (
-      <View style={styles.senpaiMiniAvatar}>
-        <View style={styles.senpaiMiniHair} />
-        <View style={styles.senpaiMiniFace}>
-          <View style={[styles.senpaiMiniEye, styles.senpaiMiniEyeLeft]} />
-          <View style={[styles.senpaiMiniEye, styles.senpaiMiniEyeRight]} />
-          <View style={styles.senpaiMiniSmile} />
-        </View>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.senpaiIllustration}>
-      <View style={styles.senpaiHair} />
-      <View style={styles.senpaiFace}>
-        <View style={[styles.senpaiEye, styles.senpaiEyeLeft]} />
-        <View style={[styles.senpaiEye, styles.senpaiEyeRight]} />
-        <View style={styles.senpaiSmile} />
-      </View>
-      <View style={styles.senpaiBody}>
-        <View style={styles.senpaiBook} />
-      </View>
-    </View>
-  );
-}
-
 export default function ConsultationScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { isPremium } = useSubscription();
   const chatLimit = useDailyLimit('@pocket_senpai_daily_chat', FREE_PLAN_LIMITS.dailyChatMessages, isPremium);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -170,6 +144,14 @@ export default function ConsultationScreen() {
               type: 'consultation',
               title: favoriteTitle,
               category: response.category,
+              summary: response.conclusion,
+              details: [
+                { label: '結論', text: response.conclusion },
+                { label: '現場での対応', text: response.fieldAction },
+                { label: '患者さんへの言い方', text: response.patientTalk },
+                { label: '注意点', text: response.caution },
+                { label: '先輩から一言', text: response.senpaiMessage },
+              ].filter(detail => detail.text),
             }}
           />
         </View>
@@ -240,13 +222,15 @@ export default function ConsultationScreen() {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={90}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <ScrollView
           ref={scrollViewRef}
           style={styles.messagesContainer}
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
         >
           <Disclaimer />
           <View style={styles.localModelNotice}>
@@ -257,8 +241,8 @@ export default function ConsultationScreen() {
             />
             <Text style={styles.localModelText}>
               {qwenStatus === 'ready'
-                ? 'Qwen3オンデバイス整形が有効です'
-                : 'Qwen3未読込のため、監修済みテンプレートで安全に応答します'}
+                ? 'AIのオンデバイス補助が有効です'
+                : 'AIは監修済みデータをもとに安全に応答します'}
             </Text>
           </View>
           {!isPremium && (
@@ -268,7 +252,7 @@ export default function ConsultationScreen() {
           )}
 
           <View style={styles.senpaiIntroCard}>
-            <SenpaiIllustration />
+            <SenpaiCharacter />
             <View style={styles.senpaiIntroTextContainer}>
               <Text style={styles.senpaiIntroTitle}>今日はどうしたの？</Text>
               <Text style={styles.senpaiIntroText}>
@@ -314,7 +298,7 @@ export default function ConsultationScreen() {
               ) : (
                 <View style={styles.aiMessageContainer}>
                   <View style={styles.aiAvatar}>
-                    <SenpaiIllustration compact />
+                    <SenpaiCharacter compact />
                   </View>
                   <View style={styles.aiBubble}>
                     {message.response && renderAIResponse(message.response)}
@@ -327,7 +311,7 @@ export default function ConsultationScreen() {
           {isLoading && (
             <View style={styles.loadingContainer}>
               <View style={styles.aiAvatar}>
-                <SenpaiIllustration compact />
+                <SenpaiCharacter compact />
               </View>
               <View style={styles.loadingBubble}>
                 <ActivityIndicator size="small" color={COLORS.primary} />
@@ -337,7 +321,7 @@ export default function ConsultationScreen() {
           )}
         </ScrollView>
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { paddingBottom: Math.max(insets.bottom, SPACING.sm) }]}>
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -376,7 +360,7 @@ const styles = StyleSheet.create({
   },
   messagesContent: {
     padding: SPACING.md,
-    paddingBottom: SPACING.lg,
+    paddingBottom: 120,
   },
   localModelNotice: {
     flexDirection: 'row',
@@ -697,7 +681,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    paddingTop: SPACING.sm,
     backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
@@ -714,8 +698,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FONT_SIZES.md,
     color: COLORS.text,
-    maxHeight: 100,
+    minHeight: 42,
+    maxHeight: 112,
     paddingVertical: SPACING.sm,
+    textAlignVertical: 'top',
   },
   sendButton: {
     width: 36,

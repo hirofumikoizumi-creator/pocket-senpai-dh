@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../src/utils/theme';
 import { Disclaimer } from '../src/components/Disclaimer';
 import { AdBanner } from '../src/components/AdBanner';
+import { SenpaiCharacter } from '../src/components/SenpaiCharacter';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - SPACING.lg * 3) / 2;
@@ -25,39 +26,6 @@ const menuCards = [
   { id: '5', title: 'お気に入り', subtitle: '保存した内容', icon: 'heart-outline', route: '/favorites', color: '#DDA0DD' },
   { id: '6', title: 'プレミアム', subtitle: '月額500円', icon: 'crown-outline', route: '/premium', color: '#4ECDC4' },
 ];
-
-function SenpaiCharacter() {
-  return (
-    <View style={styles.senpaiCharacter}>
-      <View style={styles.characterShadow} />
-      <View style={styles.hairBack} />
-      <View style={styles.hairBun} />
-      <View style={styles.face}>
-        <View style={styles.bangsLeft} />
-        <View style={styles.bangsRight} />
-        <View style={styles.eyeRow}>
-          <View style={styles.eye} />
-          <View style={styles.eye} />
-        </View>
-        <View style={styles.smile} />
-      </View>
-      <View style={styles.neck} />
-      <View style={styles.uniformBody}>
-        <View style={styles.collarLeft} />
-        <View style={styles.collarRight} />
-        <View style={styles.clipboard}>
-          <MaterialCommunityIcons name="clipboard-check-outline" size={20} color={COLORS.primaryDark} />
-        </View>
-      </View>
-      <View style={styles.armLeft} />
-      <View style={styles.armRight} />
-      <View style={styles.legLeft} />
-      <View style={styles.legRight} />
-      <View style={styles.shoeLeft} />
-      <View style={styles.shoeRight} />
-    </View>
-  );
-}
 
 export default function HomeScreen() {
   const router = useRouter();

@@ -58,6 +58,16 @@ export default function TalkDetailScreen() {
                     type: 'talk',
                     title: talk.title,
                     category: talk.category,
+                    summary: talk.situation,
+                    details: [
+                      { label: '場面', text: talk.situation },
+                      {
+                        label: '会話例',
+                        text: talk.dialogues
+                          .map(dialogue => `${dialogue.speaker === 'dh' ? '歯科衛生士' : '患者さん'}: ${dialogue.text}`)
+                          .join('\n'),
+                      },
+                    ],
                   }}
                 />
               </View>

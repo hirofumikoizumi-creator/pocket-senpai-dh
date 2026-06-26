@@ -177,6 +177,11 @@ export default function ChecklistScreen() {
                     type: 'checklist',
                     title: checkItem.text,
                     category: item.title,
+                    summary: checkItem.text,
+                    details: [
+                      { label: 'チェック内容', text: checkItem.text },
+                      { label: 'カテゴリ', text: item.title },
+                    ],
                   }}
                 />
               </View>

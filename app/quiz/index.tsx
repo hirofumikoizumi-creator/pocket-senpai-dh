@@ -178,6 +178,13 @@ export default function QuizScreen() {
                   type: 'quiz',
                   title: quiz.question,
                   category: quiz.category,
+                  summary: quiz.explanation,
+                  details: [
+                    { label: '問題', text: quiz.question },
+                    { label: '選択肢', text: quiz.options.map((option, optionIndex) => `${String.fromCharCode(65 + optionIndex)}. ${option}`).join('\n') },
+                    { label: '正解', text: quiz.options[quiz.correctIndex] },
+                    { label: '解説', text: quiz.explanation },
+                  ],
                 }}
               />
             </View>

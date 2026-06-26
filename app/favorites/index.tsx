@@ -31,7 +31,7 @@ const typeLabels: Record<string, string> = {
 
 export default function FavoritesScreen() {
   const router = useRouter();
-  const { favorites, isLoading, removeFavorite, refreshFavorites } = useFavorites();
+  const { favorites, removeFavorite, refreshFavorites } = useFavorites();
 
   useEffect(() => {
     refreshFavorites();
@@ -50,6 +50,7 @@ export default function FavoritesScreen() {
 
   const renderItem = ({ item }: { item: FavoriteItem }) => {
     const typeInfo = typeIcons[item.type] || { icon: 'star', color: COLORS.primary };
+    const details = item.details?.filter(detail => detail.text.trim()) ?? [];
 
     return (
       <TouchableOpacity
@@ -57,22 +58,37 @@ export default function FavoritesScreen() {
         onPress={() => router.push(getRoute(item) as any)}
         activeOpacity={0.7}
       >
-        <View style={[styles.iconContainer, { backgroundColor: typeInfo.color + '20' }]}>
-          <MaterialCommunityIcons name={typeInfo.icon as any} size={22} color={typeInfo.color} />
+        <View style={styles.cardHeader}>
+          <View style={[styles.iconContainer, { backgroundColor: typeInfo.color + '20' }]}>
+            <MaterialCommunityIcons name={typeInfo.icon as any} size={22} color={typeInfo.color} />
+          </View>
+          <View style={styles.cardContent}>
+            <Text style={styles.cardType}>{typeLabels[item.type]}</Text>
+            <Text style={styles.cardTitle}>{item.title}</Text>
+            <Text style={styles.cardCategory}>{item.category}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => removeFavorite(item.id, item.type)}
+            accessibilityRole="button"
+            accessibilityLabel="お気に入りから削除"
+          >
+            <MaterialCommunityIcons name="heart" size={20} color={COLORS.secondary} />
+          </TouchableOpacity>
         </View>
-        <View style={styles.cardContent}>
-          <Text style={styles.cardType}>{typeLabels[item.type]}</Text>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardCategory}>{item.category}</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.removeButton}
-          onPress={() => removeFavorite(item.id, item.type)}
-          accessibilityRole="button"
-          accessibilityLabel="お気に入りから削除"
-        >
-          <MaterialCommunityIcons name="heart" size={20} color={COLORS.secondary} />
-        </TouchableOpacity>
+
+        {item.summary && <Text style={styles.summaryText}>{item.summary}</Text>}
+
+        {details.length > 0 && (
+          <View style={styles.detailList}>
+            {details.map((detail, index) => (
+              <View key={`${detail.label}-${index}`} style={styles.detailBlock}>
+                <Text style={styles.detailLabel}>{detail.label}</Text>
+                <Text style={styles.detailText}>{detail.text}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -92,7 +108,7 @@ export default function FavoritesScreen() {
             <MaterialCommunityIcons name="heart-outline" size={60} color={COLORS.textLight} />
             <Text style={styles.emptyTitle}>お気に入りはまだありません</Text>
             <Text style={styles.emptySubtitle}>
-              気になった内容のハートマークをタップすると{'\n'}ここでまとめて確認できます
+              気になった内容のハートマークをタップすると{'\n'}ここで内容まで確認できます
             </Text>
           </View>
         ) : (
@@ -139,13 +155,15 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.md,
     padding: SPACING.md,
     marginBottom: SPACING.sm,
     ...SHADOWS.sm,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   iconContainer: {
     width: 40,
@@ -173,6 +191,32 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.sm,
     color: COLORS.textSecondary,
     marginTop: 2,
+  },
+  summaryText: {
+    marginTop: SPACING.sm,
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.text,
+    lineHeight: 20,
+  },
+  detailList: {
+    marginTop: SPACING.sm,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    paddingTop: SPACING.sm,
+  },
+  detailBlock: {
+    marginBottom: SPACING.sm,
+  },
+  detailLabel: {
+    fontSize: FONT_SIZES.xs,
+    color: COLORS.primary,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  detailText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
   },
   removeButton: {
     padding: SPACING.sm,

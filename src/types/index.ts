@@ -70,11 +70,18 @@ export interface Quiz {
 }
 
 // お気に入り
+export interface FavoriteDetail {
+  label: string;
+  text: string;
+}
+
 export interface FavoriteItem {
   id: string;
   type: 'consultation' | 'talk' | 'manual' | 'checklist' | 'quiz';
   title: string;
   category: string;
+  summary?: string;
+  details?: FavoriteDetail[];
   savedAt: string;
 }
 

@@ -54,6 +54,13 @@ export default function ManualDetailScreen() {
                   type: 'manual',
                   title: manual.title,
                   category: manual.category,
+                  summary: manual.overview,
+                  details: [
+                    { label: '概要', text: manual.overview },
+                    { label: '手順', text: manual.steps.map(step => `${step.order}. ${step.title}: ${step.description}`).join('\n') },
+                    { label: 'ポイント', text: manual.tips.join('\n') },
+                    { label: '注意点', text: manual.cautions.join('\n') },
+                  ],
                 }}
               />
             </View>
