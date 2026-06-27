@@ -7,10 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
+  Keyboard,
   ActivityIndicator,
 } from 'react-native';
+import type { KeyboardEvent } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/utils/theme';
@@ -52,6 +53,7 @@ export default function ConsultationScreen() {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [qwenStatus, setQwenStatus] = useState<OnDeviceQwenStatus>('loading');
+  const [keyboardInset, setKeyboardInset] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -63,6 +65,29 @@ export default function ConsultationScreen() {
       mounted = false;
     };
   }, []);
+
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillChangeFrame' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSubscription = Keyboard.addListener(showEvent, (event: KeyboardEvent) => {
+      const keyboardHeight = event.endCoordinates?.height ?? 0;
+      setKeyboardInset(Platform.OS === 'ios' ? Math.max(keyboardHeight - insets.bottom, 0) : 0);
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 80);
+    });
+
+    const hideSubscription = Keyboard.addListener(hideEvent, () => {
+      setKeyboardInset(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, [insets.bottom]);
 
   const showLimitAlert = () => {
     Alert.alert(
@@ -219,15 +244,11 @@ export default function ConsultationScreen() {
           headerBackTitle: '戻る',
         }}
       />
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
+      <View style={styles.container}>
         <ScrollView
           ref={scrollViewRef}
           style={styles.messagesContainer}
-          contentContainerStyle={styles.messagesContent}
+          contentContainerStyle={[styles.messagesContent, { paddingBottom: 120 + keyboardInset }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
@@ -321,7 +342,15 @@ export default function ConsultationScreen() {
           )}
         </ScrollView>
 
-        <View style={[styles.inputContainer, { paddingBottom: Math.max(insets.bottom, SPACING.sm) }]}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              paddingBottom: keyboardInset > 0 ? SPACING.sm : Math.max(insets.bottom, SPACING.sm),
+              marginBottom: keyboardInset,
+            },
+          ]}
+        >
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -331,6 +360,13 @@ export default function ConsultationScreen() {
               onChangeText={setInputText}
               multiline
               maxLength={200}
+              scrollEnabled
+              blurOnSubmit={false}
+              onFocus={() => {
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 80);
+              }}
             />
             <TouchableOpacity
               style={[styles.sendButton, (!inputText.trim() || (!chatLimit.canUse && !isPremium)) && styles.sendButtonDisabled]}
@@ -345,7 +381,7 @@ export default function ConsultationScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </>
   );
 }
