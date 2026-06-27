@@ -1,4 +1,3 @@
-import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import { modelManifest } from '../data/modelManifest';
 import { ConsultationResponse } from '../types';
@@ -20,25 +19,30 @@ type LlamaModule = typeof import('llama.rn');
 type LlamaContext = Awaited<ReturnType<LlamaModule['initLlama']>>;
 
 const MIN_REAL_MODEL_BYTES = 500 * 1024 * 1024;
-const QWEN_MODEL_ASSET = require('../../assets/models/Qwen3-0.6B-Q8_0.gguf');
 const STOP_WORDS = ['</s>', '<|end|>', '<|im_end|>', '<|endoftext|>'];
 
 let contextPromise: Promise<LlamaContext | null> | null = null;
 let lastStatus: OnDeviceQwenStatus = 'loading';
 
+function getBundledModelCandidates(): string[] {
+  const bundleDirectory = (FileSystem as typeof FileSystem & { bundleDirectory?: string }).bundleDirectory;
+  if (!bundleDirectory) return [];
+
+  return [
+    `${bundleDirectory}${modelManifest.filename}`,
+    `${bundleDirectory}assets/models/${modelManifest.filename}`,
+  ];
+}
+
 async function getBundledModelUri(): Promise<string | null> {
-  const asset = Asset.fromModule(QWEN_MODEL_ASSET);
-  await asset.downloadAsync();
-
-  const uri = asset.localUri ?? asset.uri;
-  if (!uri) return null;
-
-  const info = await FileSystem.getInfoAsync(uri);
-  if (!info.exists || typeof info.size !== 'number' || info.size < MIN_REAL_MODEL_BYTES) {
-    return null;
+  for (const uri of getBundledModelCandidates()) {
+    const info = await FileSystem.getInfoAsync(uri);
+    if (info.exists && typeof info.size === 'number' && info.size >= MIN_REAL_MODEL_BYTES) {
+      return uri.startsWith('file://') ? uri : `file://${uri}`;
+    }
   }
 
-  return uri.startsWith('file://') ? uri : `file://${uri}`;
+  return null;
 }
 
 async function loadContext(): Promise<LlamaContext | null> {
@@ -149,3 +153,4 @@ export async function formatWithOnDeviceQwen(
 
   return null;
 }
+

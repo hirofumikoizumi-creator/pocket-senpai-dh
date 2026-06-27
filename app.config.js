@@ -56,6 +56,7 @@ module.exports = {
     plugins: [
       'expo-router',
       'expo-font',
+      './plugins/with-qwen-model-resource',
       [
         'expo-build-properties',
         {
@@ -109,4 +110,5 @@ module.exports = {
     },
   },
 };
+
 
