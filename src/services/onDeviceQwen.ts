@@ -80,6 +80,23 @@ async function getContext(): Promise<LlamaContext | null> {
   return contextPromise;
 }
 
+
+function buildSenpaiChatPrompt(query: string): string {
+  return [
+    'あなたは歯科衛生士向けアプリ「ポケット先輩」の、やさしい先輩歯科衛生士です。',
+    'ここでは専門知識の新規生成ではなく、雑談、日常の悩み、身近な相談、気持ちの整理にだけ答えます。',
+    '相手は後輩です。敬語すぎず、やわらかい口語で、安心できる短めの返答にしてください。',
+    '診断、治療方針、薬剤判断、麻酔判断、レントゲン読影、外科処置判断、医療事故判断、患者個別の医療判断は絶対にしないでください。',
+    '専門的・医療的な判断が必要な話になった場合は、先輩として気持ちは受け止めつつ、歯科医師・院内ルール・監修済みメニューの確認へ促してください。',
+    '必ずJSONだけを返してください。Markdownや説明文は禁止です。',
+    '',
+    'JSON形式:',
+    '{"conclusion":"","fieldAction":"","patientTalk":"","caution":"","senpaiMessage":""}',
+    '',
+    `後輩の話: ${query}`,
+  ].join('\n');
+}
+
 function buildPrompt(input: QwenFormatInput): string {
   return [
     'あなたは歯科衛生士向け教育アプリ内のオンデバイス整形器です。',
@@ -149,6 +166,37 @@ export async function formatWithOnDeviceQwen(
     });
 
     return parseFormattedResponse(result.text, input.source);
+  }
+
+  return null;
+}
+
+export async function chatWithOnDeviceSenpai(query: string): Promise<ConsultationResponse | null> {
+  if (!modelManifest.cloudApiEnabled) {
+    const context = await getContext();
+    if (!context) return null;
+
+    const source: ConsultationResponse = {
+      id: `senpai-chat-${Date.now()}`,
+      category: '先輩との雑談',
+      keywords: [],
+      conclusion: '話してくれてありがとう。先輩として、まずは気持ちを一緒に整理するね。',
+      fieldAction: '',
+      patientTalk: '',
+      caution: '専門的な判断が必要な内容は、歯科医師・所属医院の方針・監修済みメニューを確認してください。',
+      senpaiMessage: 'ひとりで抱えなくて大丈夫。少しずつ一緒に考えよう。',
+    };
+
+    const result = await context.completion({
+      prompt: buildSenpaiChatPrompt(query),
+      n_predict: 260,
+      temperature: 0.65,
+      top_k: 40,
+      top_p: 0.9,
+      stop: STOP_WORDS,
+    });
+
+    return parseFormattedResponse(result.text, source);
   }
 
   return null;

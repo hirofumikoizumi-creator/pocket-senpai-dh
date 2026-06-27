@@ -44,6 +44,8 @@ const suggestedQuestions = [
   'TBIのコツを知りたい',
 ];
 
+const INPUT_KEYBOARD_EXTRA_OFFSET = Platform.OS === 'ios' ? 56 : 12;
+
 export default function ConsultationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -73,7 +75,10 @@ export default function ConsultationScreen() {
 
     const showSubscription = Keyboard.addListener(showEvent, (event: KeyboardEvent) => {
       const keyboardHeight = event.endCoordinates?.height ?? 0;
-      setKeyboardInset(Platform.OS === 'ios' ? Math.max(keyboardHeight - insets.bottom, 0) : 0);
+      const visibleKeyboardHeight = Platform.OS === 'ios'
+        ? Math.max(keyboardHeight - insets.bottom, 0)
+        : keyboardHeight;
+      setKeyboardInset(visibleKeyboardHeight > 0 ? visibleKeyboardHeight + INPUT_KEYBOARD_EXTRA_OFFSET : 0);
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }, 80);
@@ -752,3 +757,4 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.border,
   },
 });
+
