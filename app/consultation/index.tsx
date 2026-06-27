@@ -58,6 +58,12 @@ export default function ConsultationScreen() {
   const [keyboardInset, setKeyboardInset] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const scrollToLatest = (delay = 80) => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, delay);
+  };
+
   useEffect(() => {
     let mounted = true;
     getOnDeviceQwenStatus().then((status) => {
@@ -79,9 +85,7 @@ export default function ConsultationScreen() {
         ? Math.max(keyboardHeight - insets.bottom, 0)
         : keyboardHeight;
       setKeyboardInset(visibleKeyboardHeight > 0 ? visibleKeyboardHeight + INPUT_KEYBOARD_EXTRA_OFFSET : 0);
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 80);
+      scrollToLatest();
     });
 
     const hideSubscription = Keyboard.addListener(hideEvent, () => {
@@ -126,6 +130,7 @@ export default function ConsultationScreen() {
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
     setIsLoading(true);
+    scrollToLatest();
 
     try {
       const response = await getAIResponse(query);
@@ -157,9 +162,6 @@ export default function ConsultationScreen() {
       setIsLoading(false);
     }
 
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100);
   };
 
   const renderAIResponse = (response: ConsultationResponse) => {
@@ -253,7 +255,7 @@ export default function ConsultationScreen() {
         <ScrollView
           ref={scrollViewRef}
           style={styles.messagesContainer}
-          contentContainerStyle={[styles.messagesContent, { paddingBottom: 120 + keyboardInset }]}
+          contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
@@ -368,9 +370,7 @@ export default function ConsultationScreen() {
               scrollEnabled
               blurOnSubmit={false}
               onFocus={() => {
-                setTimeout(() => {
-                  scrollViewRef.current?.scrollToEnd({ animated: true });
-                }, 80);
+                scrollToLatest();
               }}
             />
             <TouchableOpacity
