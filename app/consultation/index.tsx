@@ -19,6 +19,7 @@ import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { getAIResponse } from '../../src/services/aiService';
 import { ConsultationResponse } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { SourceList } from '../../src/components/SourceList';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
 import { PremiumPrompt } from '../../src/components/PremiumPrompt';
 import { useDailyLimit } from '../../src/hooks/useDailyLimit';
@@ -239,6 +240,7 @@ export default function ConsultationScreen() {
         )}
 
         <Disclaimer compact />
+        <SourceList compact />
       </View>
     );
   };

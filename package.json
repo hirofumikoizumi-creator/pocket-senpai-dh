@@ -31,6 +31,7 @@
     "expo-router": "~56.2.11",
     "expo-splash-screen": "^56.0.10",
     "expo-status-bar": "~56.0.4",
+    "expo-tracking-transparency": "~56.0.5",
     "llama.rn": "^0.12.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",

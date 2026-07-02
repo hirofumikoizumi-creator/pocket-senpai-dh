@@ -1,9 +1,10 @@
 import React from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BORDER_RADIUS, COLORS, FONT_SIZES, SHADOWS, SPACING } from '../../src/utils/theme';
 import { FREE_PLAN_LIMITS, PREMIUM_PLAN } from '../../src/constants/plans';
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../../src/constants/legal';
 import { REVENUECAT_ENTITLEMENT_ID, REVENUECAT_OFFERING_ID } from '../../src/services/revenueCat';
 import { useSubscription } from '../../src/hooks/useSubscription';
 
@@ -20,6 +21,11 @@ const freeLimits = [
   `各コンテンツ${FREE_PLAN_LIMITS.contentItems}件まで`,
   `クイズ1日${FREE_PLAN_LIMITS.dailyQuizQuestions}問`,
   `お気に入り${FREE_PLAN_LIMITS.favorites}件まで、広告あり`,
+];
+
+const legalLinks = [
+  { label: '利用規約（EULA）', url: TERMS_OF_USE_URL },
+  { label: 'プライバシーポリシー', url: PRIVACY_POLICY_URL },
 ];
 
 function getErrorMessage(error: unknown) {
@@ -92,6 +98,11 @@ export default function PremiumScreen() {
           <Text style={styles.description}>
             仕事中の確認と学習を、制限なく使えるプランです。
           </Text>
+          <View style={styles.planInfoBox}>
+            <Text style={styles.planInfoText}>サブスクリプション名: {PREMIUM_PLAN.name}</Text>
+            <Text style={styles.planInfoText}>期間: 1か月ごとの自動更新</Text>
+            <Text style={styles.planInfoText}>価格: {PREMIUM_PLAN.priceLabel}</Text>
+          </View>
           {isPremium && (
             <View style={styles.activeBadge}>
               <MaterialCommunityIcons name="check-circle" size={16} color={COLORS.primaryDark} />
@@ -135,6 +146,19 @@ export default function PremiumScreen() {
         <TouchableOpacity style={styles.restoreButton} onPress={handleRestore} activeOpacity={0.75} disabled={isLoading}>
           <Text style={styles.restoreText}>購入を復元</Text>
         </TouchableOpacity>
+
+        <View style={styles.termsBox}>
+          <Text style={styles.termsText}>
+            購入すると、現在の期間終了24時間前までに解約されない限り自動更新されます。購入後の管理・解約はApple IDのサブスクリプション設定から行えます。
+          </Text>
+          <View style={styles.legalLinkRow}>
+            {legalLinks.map((link) => (
+              <TouchableOpacity key={link.url} onPress={() => Linking.openURL(link.url)} activeOpacity={0.75}>
+                <Text style={styles.legalLinkText}>{link.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
 
         <TouchableOpacity style={styles.devButton} onPress={handleDevelopmentToggle} activeOpacity={0.75}>
           <Text style={styles.devText}>
@@ -200,6 +224,19 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: SPACING.sm,
     fontWeight: '700',
+  },
+  planInfoBox: {
+    width: '100%',
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md,
+    marginTop: SPACING.md,
+  },
+  planInfoText: {
+    color: COLORS.text,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    lineHeight: 21,
   },
   activeBadge: {
     flexDirection: 'row',
@@ -292,6 +329,30 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
+  },
+  termsBox: {
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: SPACING.md,
+    marginTop: SPACING.sm,
+  },
+  termsText: {
+    color: COLORS.textSecondary,
+    fontSize: FONT_SIZES.xs,
+    lineHeight: 18,
+    marginBottom: SPACING.sm,
+  },
+  legalLinkRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.md,
+  },
+  legalLinkText: {
+    color: COLORS.primaryDark,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '800',
   },
   devButton: {
     borderRadius: BORDER_RADIUS.md,

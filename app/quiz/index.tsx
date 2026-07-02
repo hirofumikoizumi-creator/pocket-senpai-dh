@@ -14,6 +14,7 @@ import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { quizData, getQuizCategories, getQuizzesByCategory } from '../../src/data/quizzes';
 import { Quiz } from '../../src/types';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { SourceList } from '../../src/components/SourceList';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
 import { PremiumPrompt } from '../../src/components/PremiumPrompt';
 import { useDailyLimit } from '../../src/hooks/useDailyLimit';
@@ -229,13 +230,16 @@ export default function QuizScreen() {
           })}
 
           {showExplanation && (
-            <View style={styles.explanationCard}>
-              <View style={styles.explanationHeader}>
-                <MaterialCommunityIcons name="lightbulb-on-outline" size={18} color={COLORS.primary} />
-                <Text style={styles.explanationTitle}>解説</Text>
+            <>
+              <View style={styles.explanationCard}>
+                <View style={styles.explanationHeader}>
+                  <MaterialCommunityIcons name="lightbulb-on-outline" size={18} color={COLORS.primary} />
+                  <Text style={styles.explanationTitle}>解説</Text>
+                </View>
+                <Text style={styles.explanationText}>{quiz.explanation}</Text>
               </View>
-              <Text style={styles.explanationText}>{quiz.explanation}</Text>
-            </View>
+              <SourceList compact />
+            </>
           )}
 
           {selectedAnswer !== null && (

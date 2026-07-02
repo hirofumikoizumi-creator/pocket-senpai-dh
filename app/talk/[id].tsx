@@ -11,6 +11,7 @@ import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, SHADOWS } from '../../src/u
 import { FREE_PLAN_LIMITS } from '../../src/constants/plans';
 import { talkScripts } from '../../src/data/talks';
 import { Disclaimer } from '../../src/components/Disclaimer';
+import { SourceList } from '../../src/components/SourceList';
 import { FavoriteButton } from '../../src/components/FavoriteButton';
 import { PremiumPrompt } from '../../src/components/PremiumPrompt';
 import { AdBanner } from '../../src/components/AdBanner';
@@ -107,6 +108,7 @@ export default function TalkDetailScreen() {
             </View>
 
             <AdBanner size="banner" style={styles.adSpace} />
+            <SourceList />
           </>
         )}
 

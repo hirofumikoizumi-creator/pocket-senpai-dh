@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { PaperProvider, DefaultTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '../src/utils/theme';
+import { requestTrackingTransparencyIfNeeded } from '../src/services/trackingTransparency';
 
 const theme = {
   ...DefaultTheme,
@@ -16,6 +18,10 @@ const theme = {
 };
 
 export default function RootLayout() {
+  useEffect(() => {
+    requestTrackingTransparencyIfNeeded();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
