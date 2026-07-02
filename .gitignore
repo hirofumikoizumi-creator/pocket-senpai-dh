@@ -2,12 +2,16 @@
 
 # dependencies
 node_modules/
+node_modules_broken*/
 
 # Expo
 .expo/
 dist/
 web-build/
 expo-env.d.ts
+.tmp-expo-cli/
+.tmp-extract-expo-cli.js
+expo-cli-*.tgz
 
 # Native
 .kotlin/
